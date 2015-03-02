@@ -1,4 +1,4 @@
-package de.metacode.de.grip
+package de.metacode.grip
 
 /**
  * Created by mloesch on 02.03.15.
