@@ -1,0 +1,28 @@
+import de.metacode.grip.env.Sql
+import de.metacode.grip.renderer.excel.Excel
+import de.metacode.grip.util.Mail
+
+import java.sql.ResultSet
+
+env("mysql", new Sql(
+        url: "jdbc:mysql://localhost/mydb",
+        driver: "com.mysql.jdbc.Driver",
+        user: "root",
+        pwd: ""
+))
+
+ResultSet rs1 = null
+ResultSet rs2 = null
+
+useMysql { groovy.sql.Sql sql ->
+    sql.query("select * from tab1", { ResultSet rs -> rs1 = rs})
+    sql.query("select * from tab2", { ResultSet rs -> rs2 = rs})
+}
+
+def xls = new Excel()
+xls.writeToSheet(xls.newSheet("Tab1"),rs1)
+xls.writeToSheet(xls.newSheet("Tab2"),rs2)
+
+Mail.send(smtpHost: "smpt.provider.com", from: "me@provider.com", to: "to@provider.com",
+        subject: "Result", text: "Here's your data",
+        xls, "mydata.xls")
