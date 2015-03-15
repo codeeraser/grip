@@ -7,6 +7,10 @@ class EnvProcessor {
 
     Binding binding
 
+    EnvProcessor(Binding binding) {
+        this.binding = binding
+    }
+
     void env(String name, Env env) {
         if (!this.binding.hasProperty("env")) {
             this.binding.setProperty("env", [:])

@@ -1,12 +1,10 @@
 package de.metacode.grip.renderer.excel
 
-import de.metacode.grip.util.AttachmentProvider
 @Grapes([
         @Grab(group = 'javax.mail', module = 'mail', version = '1.4'),
         @Grab(group = 'org.apache.poi', module = 'poi', version = '3.11')
 ])
-
-import groovy.sql.Sql
+import de.metacode.grip.util.AttachmentProvider
 import org.apache.poi.hssf.usermodel.HSSFRow
 import org.apache.poi.hssf.usermodel.HSSFSheet
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
@@ -18,11 +16,11 @@ import java.sql.ResultSet
 /**
  * Created by mloesch on 15.03.15.
  */
-class Excel implements AttachmentProvider {
+class SimpleExcel implements AttachmentProvider {
 
     HSSFWorkbook wb;
 
-    Excel() {
+    SimpleExcel() {
         this.wb = new HSSFWorkbook()
     }
 
@@ -30,7 +28,7 @@ class Excel implements AttachmentProvider {
         return this.wb.createSheet(name)
     }
 
-    Excel writeToSheet(HSSFSheet sheet, ResultSet rs) {
+    SimpleExcel writeToSheet(HSSFSheet sheet, ResultSet rs) {
         def row = 0;
         writeHead(sheet.createRow(row++), rs)
         while (rs.next()) {

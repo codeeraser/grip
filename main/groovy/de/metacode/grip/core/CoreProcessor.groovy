@@ -1,13 +1,19 @@
 package de.metacode.grip.core
 
 import de.metacode.grip.env.Env
+import de.metacode.grip.env.EnvProcessor
 
 /**
  * Created by mloesch on 14.03.15.
  */
-class CoreProcessor {
+class CoreProcessor extends EnvProcessor {
 
     Binding binding
+
+    CoreProcessor(Binding binding) {
+        super(binding)
+        this.binding = binding
+    }
 
     def methodMissing(String name, args) {
         if (name.startsWith("use")) {
