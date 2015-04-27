@@ -1,23 +1,41 @@
 package de.metacode.grip.core
 
 import de.metacode.grip.env.Env
-import de.metacode.grip.env.EnvProcessor
+import groovy.util.logging.Slf4j
 
 /**
  * Created by mloesch on 14.03.15.
  */
-class CoreProcessor extends EnvProcessor {
-
-    Binding binding
+@Slf4j
+class CoreProcessor {
+    static final String ENV = "env"
+    final Binding binding
 
     CoreProcessor(Binding binding) {
-        super(binding)
         this.binding = binding
     }
 
+    void env(String name, Env env) {
+        log.info("HEY HEY $name!")
+        if (!this.binding.hasProperty(ENV)) {
+            this.binding.setProperty(ENV, [:])
+            log.info("setting property env")
+        }
+        Map envs = this.binding.getProperty(ENV) as Map
+        envs.put(name.toLowerCase(), env)
+    }
+
+/*
+    Env createSql(String url, String driver, String user, String pwd) {
+        return new Sql(url: url, driver:driver, user:user, pwd:pwd)
+    }
+*/
+
     def methodMissing(String name, args) {
+        log.info("methodMissing calls for $name")
         if (name.startsWith("use")) {
-            Map envs = this.binding.getProperty("env") as Map<String, Env>
+            log.info(this.binding.properties.toMapString())
+            Map envs = this.binding.getProperty(ENV) as Map<String, Env>
             def envName = name.substring(3).toLowerCase()
             if (!envs.containsKey(envName)) {
                 throw new IllegalStateException("no env with name $envName available!")

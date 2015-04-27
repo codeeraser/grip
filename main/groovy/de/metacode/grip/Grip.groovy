@@ -2,9 +2,10 @@ package de.metacode.grip
 
 import de.metacode.grip.core.Bootstrap
 import de.metacode.grip.core.CoreProcessor
-import de.metacode.grip.env.EnvProcessor
+import de.metacode.grip.env.SqlEnv
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ImportCustomizer
+import org.slf4j.LoggerFactory
 
 /**
  * Created by mloesch on 02.03.15.
@@ -13,13 +14,18 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer
 @Grapes([
         @Grab(group = 'commons-cli', module = 'commons-cli', version = '1.2'),
         @Grab('org.reflections:reflections:0.9.9-RC1'),
-        @Grab(group = 'org.slf4j', module = 'slf4j-api', version = '1.7.5'),
         @Grab(group = 'org.eclipse.jgit', module = 'org.eclipse.jgit', version = '3.7.0.201502260915-r'),
-        @Grab(group = 'javax.mail', module = 'mail', version = '1.4'),
-        @Grab(group = 'org.apache.poi', module = 'poi', version = '3.11')
-//        @Grab(group = 'ch.qos.logback', module = 'logback-core', version = '1.0.13'),
-//        @Grab(group = 'ch.qos.logback', module = 'logback-classic', version = '1.0.13')
+        @Grab(group = 'org.slf4j', module = 'slf4j-api', version = '1.7.2'),
+        @Grab(group = 'org.slf4j', module = 'slf4j-simple', version = '1.7.2'),
+        @GrabExclude(group = 'xml-apis', module = 'xml-apis'),
+//plugin stuff
+        @Grab(group = 'hsqldb', module = 'hsqldb', version = '1.8.0.10'),
+        @Grab(group='javax.mail', module='javax.mail-api', version='1.5.1'),
+        @Grab(group = 'org.apache.poi', module = 'poi', version = '3.11'),
+        @Grab(group='org.quartz-scheduler', module='quartz', version='2.2.1')
 ])
+
+def log = LoggerFactory.getLogger(Grip.class)
 
 def bs = new Bootstrap()
 bs.run()
@@ -29,7 +35,7 @@ def cli = new CliBuilder(usage: 'groovy Grip.groovy -f[h] script')
 cli.f(longOpt: 'file', 'file that contains a grip script', type: String, args: 1, required: true)
 cli.h(longOpt: 'help', 'usage information', required: false)
 
-OptionAccessor opt = cli.parse(args)
+def opt = cli.parse(args)
 if (!opt) {
     return
 }
@@ -43,18 +49,33 @@ def cc = new CompilerConfiguration()
 cc.scriptBaseClass = DelegatingScript.class.name
 def importCustomizer = new ImportCustomizer()
 importCustomizer.addStarImports("de.metacode.grip.env")
-cc.addCompilationCustomizers(importCustomizer)
+//cc.addCompilationCustomizers(importCustomizer)
 def sh = new GroovyShell(cc)
 
+//This is how create-methods for plugin environments could be injected
+CoreProcessor.metaClass.createSql = { Closure c ->
+    def sql = new SqlEnv()
+    c.delegate = sql
+    c.resolveStrategy = Closure.DELEGATE_ONLY
+    c()
+    sql
+}
+
+def core = new CoreProcessor(this.binding)
+
+
+log.info(this.binding.properties.toMapString())
 /// init script /////////////////////////////////////////////////////////////////////////////////////
-def env = new EnvProcessor(binding)
 def home = System.getProperty("user.home")
 def initScript = new File("""$home/.grip/env.grip""")
 if (initScript.exists()) {
-    def init = sh.parse(initScript)
-    init.setDelegate(env)
+    log.info("RUN ENV: \n$initScript.text ")
+    def init = sh.parse(initScript.text)
+    init.setDelegate(core)
     init.run()
 }
+
+log.info(this.binding.properties.toMapString())
 
 /// grip script /////////////////////////////////////////////////////////////////////////////////////
 def scriptFile = new File(opt.f as String)
@@ -64,6 +85,7 @@ if (!opt.arguments().isEmpty()) {
     script += """\n$input"""
 }
 def grip = sh.parse(script)
-def core = new CoreProcessor(binding)
 grip.setDelegate(core)
 grip.run() //run with CoreProcessor to do the actual work
+
+log.info(this.binding.properties.toMapString())

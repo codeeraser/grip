@@ -1,10 +1,10 @@
-import de.metacode.grip.env.Sql
-import de.metacode.grip.renderer.excel.Excel
+import de.metacode.grip.env.SqlEnv
+import de.metacode.grip.renderer.excel.SimpleExcel
 import de.metacode.grip.util.Mail
 
 import java.sql.ResultSet
 
-env("mysql", new Sql(
+env("mysql", new SqlEnv(
         url: "jdbc:mysql://localhost/mydb",
         driver: "com.mysql.jdbc.Driver",
         user: "root",
@@ -19,7 +19,7 @@ useMysql { groovy.sql.Sql sql ->
     sql.query("select * from tab2", { ResultSet rs -> rs2 = rs})
 }
 
-def xls = new Excel()
+def xls = new SimpleExcel()
 xls.writeToSheet(xls.newSheet("Tab1"),rs1)
 xls.writeToSheet(xls.newSheet("Tab2"),rs2)
 

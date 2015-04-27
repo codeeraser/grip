@@ -1,0 +1,27 @@
+package de.metacode.grip
+
+import de.metacode.grip.env.SqlEnv
+import groovy.sql.Sql
+
+env("hsql", new SqlEnv(
+        url: "jdbc:hsqldb:mem:testdb",
+        driver: "org.hsqldb.jdbcDriver",
+        user: "sa",
+        pwd: ""
+))
+
+useHsql { Sql sql ->
+    sql.execute("""
+            create table atable (
+            name varchar(50),
+            address varchar(100)
+        )""")
+
+    sql.execute("insert into atable(name, address) values('dave', 'some address')")
+    sql.execute("insert into atable(name, address) values('joe', 'another address')")
+    sql.execute("insert into atable(name, address) values('fred', 'yet another address')")
+
+    sql.rows("select * from atable").each { row ->
+        println("atable [ ${row.name}, ${row.address} ]")
+    }
+}

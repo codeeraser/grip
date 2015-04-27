@@ -2,6 +2,7 @@ package de.metacode.grip.util
 
 import javax.activation.DataHandler
 import javax.mail.Message
+import javax.mail.MessagingException
 import javax.mail.Session
 import javax.mail.Transport
 import javax.mail.internet.InternetAddress
@@ -24,7 +25,7 @@ class Mail {
 
         def properties = new Properties()
         properties.put("mail.smtp.host", smtpHost)
-        def session = Session.getDefaultInstance(properties, null)
+        def session = Session.getInstance(properties, null)
 
         def message = new MimeMessage(session)
         message.from = new InternetAddress(from)
@@ -42,7 +43,17 @@ class Mail {
         multipart.addBodyPart(messagePart)
         multipart.addBodyPart(exlAttachment)
 
-        message.content = multipart
-        Transport.send(message)
+        //The following fixes "javax.activation.UnsupportedDataTypeException: no object DCH for MIME type multipart/mixed;"
+        //Source: http://tanyamadurapperuma.blogspot.de/2014/01/struggling-with-nosuchproviderexception.html
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(Session.class.getClassLoader());
+        try {
+            message.setContent(multipart);
+            Transport.send(message);
+        } catch (MessagingException e) {
+            throw new ScriptException(e);
+        } finally {
+            Thread.currentThread().setContextClassLoader(classLoader);
+        }
     }
 }
