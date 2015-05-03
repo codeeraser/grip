@@ -28,7 +28,7 @@ class DeamonTest extends GroovyTestCase {
         sched.start();
 //// interpred job //////////////////////////////////////////////////////////////////////////////////
         log.info('executing dsl engine')
-/// compiler configuration //////////////////////////////////////////////////////////////////////////
+/// compiler configuration ////////////////////////////////////////////////////////////////////////////
         def cc = new CompilerConfiguration()
         cc.addCompilationCustomizers new HighlanderCustomizer("schedule")
         cc.scriptBaseClass = DelegatingScript.class.name
