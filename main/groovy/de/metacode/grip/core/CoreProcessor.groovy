@@ -1,6 +1,7 @@
 package de.metacode.grip.core
 
 import de.metacode.grip.env.Env
+import de.metacode.grip.env.SqlEnv
 import groovy.util.logging.Slf4j
 
 /**
@@ -15,7 +16,15 @@ class CoreProcessor {
         this.binding = binding
     }
 
-    void env(String name, Env env) {
+    def createSql = { Closure c ->
+        def sql = new SqlEnv()
+        c.delegate = sql
+        c.resolveStrategy = DELEGATE_ONLY
+        c()
+        sql
+    }
+
+    def env(String name, Env env) {
         log.info("HEY HEY $name!")
         if (!this.binding.hasProperty(ENV)) {
             this.binding.setProperty(ENV, [:])
@@ -24,12 +33,6 @@ class CoreProcessor {
         Map envs = this.binding.getProperty(ENV) as Map
         envs.put(name.toLowerCase(), env)
     }
-
-/*
-    Env createSql(String url, String driver, String user, String pwd) {
-        return new Sql(url: url, driver:driver, user:user, pwd:pwd)
-    }
-*/
 
     def methodMissing(String name, args) {
         log.info("methodMissing calls for $name")

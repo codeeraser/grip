@@ -3,13 +3,6 @@ package de.metacode.grip
 import de.metacode.grip.env.SqlEnv
 import groovy.sql.Sql
 
-env("hsql", new SqlEnv(
-        url: "jdbc:hsqldb:mem:testdb",
-        driver: "org.hsqldb.jdbcDriver",
-        user: "sa",
-        pwd: ""
-))
-
 useHsql { Sql sql ->
     sql.execute("""
             create table atable (
@@ -25,3 +18,14 @@ useHsql { Sql sql ->
         println("atable [ ${row.name}, ${row.address} ]")
     }
 }
+
+//schedule will be interpreted and executed when grip deamon is used
+schedule("yayJob")
+
+//env will be the first method that is executed
+env("hsql", new SqlEnv(
+        url: "jdbc:hsqldb:mem:testdb",
+        driver: "org.hsqldb.jdbcDriver",
+        user: "sa",
+        pwd: ""
+))

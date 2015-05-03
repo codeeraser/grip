@@ -2,7 +2,6 @@ package de.metacode.grip
 
 import de.metacode.grip.core.Bootstrap
 import de.metacode.grip.core.CoreProcessor
-import de.metacode.grip.env.SqlEnv
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.slf4j.LoggerFactory
@@ -53,6 +52,7 @@ importCustomizer.addStarImports("de.metacode.grip.env")
 def sh = new GroovyShell(cc)
 
 //This is how create-methods for plugin environments could be injected
+/*
 CoreProcessor.metaClass.createSql = { Closure c ->
     def sql = new SqlEnv()
     c.delegate = sql
@@ -60,6 +60,7 @@ CoreProcessor.metaClass.createSql = { Closure c ->
     c()
     sql
 }
+*/
 
 def core = new CoreProcessor(this.binding)
 
