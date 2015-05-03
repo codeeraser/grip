@@ -44,10 +44,9 @@ class JobProcessor {
     }
 
     void schedule(String name) {
-        log.info("schedule job $name!")
+        log.info("scheduling job $name!")
 
         def job = JobBuilder.newJob(JobShell.class).usingJobData("script", this.script).withIdentity(name, "tests").build();
-
         def trigger = newTrigger()
                 .withIdentity("basictesttrigger", "tests")
                 .startNow()
