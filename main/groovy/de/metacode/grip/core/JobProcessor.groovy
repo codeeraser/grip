@@ -32,7 +32,7 @@ class JobProcessor {
             /// grip script /////////////////////////////////////////////////////////////////////////////////////
             def grip = sh.parse(jobExecutionContext.getJobDetail().jobDataMap.getString("script"))
             grip.setDelegate(core)
-            grip.run() //run with CoreProcessor to do the actual work
+            grip.run() //run with CoreProcessor to do the work
             log.info(binding.properties.toMapString())
         }
     }
