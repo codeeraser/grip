@@ -1,15 +1,10 @@
 package de.metacode.grip
 
-import de.metacode.grip.core.CoreProcessor
 import de.metacode.grip.core.HighlanderCustomizer
 import de.metacode.grip.core.JobProcessor
-import de.metacode.grip.core.MoveToTopCustomizer
-import de.metacode.grip.env.SqlEnv
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.hsqldb.Server
 import org.quartz.impl.StdSchedulerFactory
-
-import static org.quartz.TriggerBuilder.newTrigger
 
 /**
  * Created by mloesch on 29.04.15.
@@ -35,7 +30,7 @@ class DeamonTest extends GroovyTestCase {
         def sh = new GroovyShell(cc)
 
         def binding = new Binding()
-        def scriptFile = new File('./test/de/metacode/grip/hsqlTest.grip')
+        def scriptFile = new File('./src/test/de/metacode/grip/hsqlTest.grip')
         def script = scriptFile.text
         def job = new JobProcessor(binding, script, sched)
 

@@ -13,3 +13,6 @@ hs_err_pid*
 
 grip.iml
 .idea
+test.log
+test.properties
+test.script
