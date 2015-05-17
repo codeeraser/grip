@@ -8,6 +8,7 @@ import groovy.grape.Grape
 class Bootstrap {
     void run() {
         loadDependencies()
+        initQuartz()
     }
 
     //this is how dependencies can be set programmatically
@@ -18,5 +19,11 @@ class Bootstrap {
                 [group : 'sapdbc', module : 'sapdbc', version : '7.4']
         ]
         Grape.grab(classLoader: classLoader, grapez)
+    }
+
+    void initQuartz() {
+        Quartz.instance.sched.addShutdownHook {
+            println "sis runner gefahr"
+        }
     }
 }

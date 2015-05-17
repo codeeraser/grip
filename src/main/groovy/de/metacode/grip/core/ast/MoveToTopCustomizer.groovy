@@ -1,4 +1,4 @@
-package de.metacode.grip.core
+package de.metacode.grip.core.ast
 
 import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.MethodNode

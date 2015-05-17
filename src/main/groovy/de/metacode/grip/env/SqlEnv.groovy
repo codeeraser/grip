@@ -1,5 +1,7 @@
 package de.metacode.grip.env
 
+import groovy.sql.Sql
+
 /**
  * Created by mloesch on 14.03.15.
  */
@@ -11,6 +13,6 @@ class SqlEnv implements Env {
 
     @Override
     def createEnv() {
-        return groovy.sql.Sql.newInstance(url, user, pwd, driver)
+        return Sql.newInstance(url, user, pwd, driver)
     }
 }

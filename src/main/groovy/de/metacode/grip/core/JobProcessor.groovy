@@ -1,10 +1,13 @@
 package de.metacode.grip.core
 
+import de.metacode.grip.core.ast.MoveToTopCustomizer
 import groovy.util.logging.Slf4j
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.quartz.*
 
 import static org.quartz.TriggerBuilder.newTrigger
+import static org.quartz.CronScheduleBuilder.*;
+
 
 /**
  * Created by mloesch on 29.04.15.
@@ -14,7 +17,6 @@ import static org.quartz.TriggerBuilder.newTrigger
 class JobProcessor {
     static final String JOB = "job"
     final Binding binding
-    final Scheduler sched
     final String script
 
     static class JobShell implements Job {
@@ -37,21 +39,21 @@ class JobProcessor {
         }
     }
 
-    JobProcessor(Binding binding, String script, Scheduler sched) {
+    JobProcessor(Binding binding, String script) {
         this.binding = binding
         this.script = script
-        this.sched = sched
     }
 
-    void schedule(String name) {
+    void schedule(String name, String cronExpression) {
         log.info("scheduling job $name!")
 
         def job = JobBuilder.newJob(JobShell.class).usingJobData("script", this.script).withIdentity(name, "tests").build();
         def trigger = newTrigger()
                 .withIdentity("basictesttrigger", "tests")
-                .startNow()
+                .withSchedule(cronSchedule(cronExpression))
+//                .startNow()
                 .build();
 
-        sched.scheduleJob(job, trigger);
+        Quartz.instance.schedule(job, trigger);
     }
 }

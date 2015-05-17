@@ -1,10 +1,10 @@
 package de.metacode.grip
 
-import de.metacode.grip.core.HighlanderCustomizer
 import de.metacode.grip.core.JobProcessor
+import de.metacode.grip.core.Quartz
+import de.metacode.grip.core.ast.HighlanderCustomizer
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.hsqldb.Server
-import org.quartz.impl.StdSchedulerFactory
 
 /**
  * Created by mloesch on 29.04.15.
@@ -17,10 +17,7 @@ class DeamonTest extends GroovyTestCase {
         Server.main()
         println "after starting server"
 
-/// quartz scheduler ////////////////////////////////////////////////////////////////////////////////
-        def schedFact = new StdSchedulerFactory();
-        def sched = schedFact.getScheduler();
-        sched.start();
+        Quartz.instance.start()
 //// interpred job //////////////////////////////////////////////////////////////////////////////////
         log.info('executing dsl engine')
 /// compiler configuration ////////////////////////////////////////////////////////////////////////////
@@ -32,7 +29,7 @@ class DeamonTest extends GroovyTestCase {
         def binding = new Binding()
         def scriptFile = new File('./src/test/de/metacode/grip/hsqlTest.grip')
         def script = scriptFile.text
-        def job = new JobProcessor(binding, script, sched)
+        def job = new JobProcessor(binding, script)
 
         /// grip script /////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,7 +37,7 @@ class DeamonTest extends GroovyTestCase {
         grip.setDelegate(job)
         grip.run() //run with JobProcessor to config the job
 
-        sched.shutdown(true)
+        Quartz.instance.shutdown()
     }
 
 }
