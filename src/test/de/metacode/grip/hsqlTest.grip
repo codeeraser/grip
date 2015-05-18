@@ -21,7 +21,7 @@ useHsql { Sql sql ->
 }
 
 //schedule will be interpreted and executed when grip deamon is used
-schedule("yayJob", "0 0/1 * * * ?")
+schedule("hsqlTest", "0/10 * * * * ?")
 
 //env will be the first method that is executed
 env("hsql", new SqlEnv(

@@ -2,6 +2,8 @@ package de.metacode.grip
 
 import de.metacode.grip.core.Bootstrap
 import de.metacode.grip.core.CoreProcessor
+import de.metacode.grip.core.ast.MoveToTopCustomizer
+import de.metacode.grip.core.ast.RemoveCustomizer
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.ImportCustomizer
 import org.slf4j.LoggerFactory
@@ -48,6 +50,9 @@ def cc = new CompilerConfiguration()
 cc.scriptBaseClass = DelegatingScript.class.name
 def importCustomizer = new ImportCustomizer()
 importCustomizer.addStarImports("de.metacode.grip.env")
+cc.addCompilationCustomizers new MoveToTopCustomizer("env")
+cc.addCompilationCustomizers new RemoveCustomizer("schedule")
+
 //cc.addCompilationCustomizers(importCustomizer)
 def sh = new GroovyShell(cc)
 

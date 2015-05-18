@@ -1,6 +1,8 @@
 package de.metacode.grip.core
 
+import de.metacode.grip.core.ast.HighlanderCustomizer
 import de.metacode.grip.core.ast.MoveToTopCustomizer
+import de.metacode.grip.core.ast.RemoveCustomizer
 import groovy.util.logging.Slf4j
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.quartz.*
@@ -25,6 +27,7 @@ class JobProcessor {
 /// compiler configuration //////////////////////////////////////////////////////////////////////////
             def cc = new CompilerConfiguration()
             cc.addCompilationCustomizers new MoveToTopCustomizer("env")
+            cc.addCompilationCustomizers new RemoveCustomizer("schedule")
             cc.scriptBaseClass = DelegatingScript.class.name
             def sh = new GroovyShell(cc)
 
@@ -47,13 +50,29 @@ class JobProcessor {
     void schedule(String name, String cronExpression) {
         log.info("scheduling job $name!")
 
-        def job = JobBuilder.newJob(JobShell.class).usingJobData("script", this.script).withIdentity(name, "tests").build();
+        def job = JobBuilder.newJob(JobShell.class).usingJobData("script", this.script).withIdentity(name).build();
         def trigger = newTrigger()
-                .withIdentity("basictesttrigger", "tests")
+                .withIdentity(name)
                 .withSchedule(cronSchedule(cronExpression))
 //                .startNow()
                 .build();
 
         Quartz.instance.schedule(job, trigger);
     }
+
+    static void run(File gripScript) {
+        def cc = new CompilerConfiguration()
+        cc.addCompilationCustomizers new HighlanderCustomizer("schedule")
+        cc.scriptBaseClass = DelegatingScript.class.name
+        def sh = new GroovyShell(cc)
+
+        def binding = new Binding()
+        def script = gripScript.text
+        def job = new JobProcessor(binding, script)
+
+        def grip = sh.parse(script)
+        grip.setDelegate(job)
+        grip.run()
+    }
+
 }

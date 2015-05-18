@@ -1,0 +1,5 @@
+schedule("longRunningTest", "0/30 * * * * ?")
+
+println "Starting long running test -> Go to sleep for 15 seconds!"
+sleep(15000)
+println "Long running test done!"

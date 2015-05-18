@@ -1,6 +1,8 @@
 package de.metacode.grip
 
 import de.metacode.grip.core.CoreProcessor
+import de.metacode.grip.core.ast.MoveToTopCustomizer
+import de.metacode.grip.core.ast.RemoveCustomizer
 import de.metacode.grip.env.SqlEnv
 import groovy.util.logging.Slf4j
 import org.codehaus.groovy.control.CompilerConfiguration
@@ -23,6 +25,8 @@ class TestJob implements Job {
 /// compiler configuration //////////////////////////////////////////////////////////////////////////
         def cc = new CompilerConfiguration()
         cc.scriptBaseClass = DelegatingScript.class.name
+        cc.addCompilationCustomizers new MoveToTopCustomizer("env")
+        cc.addCompilationCustomizers new RemoveCustomizer("schedule")
         def sh = new GroovyShell(cc)
 
 //This is how create-methods for plugin environments could be injected
