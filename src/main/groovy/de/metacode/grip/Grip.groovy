@@ -12,20 +12,6 @@ import org.slf4j.LoggerFactory
  * Created by mloesch on 02.03.15.
  */
 
-@Grapes([
-        @Grab(group = 'commons-cli', module = 'commons-cli', version = '1.2'),
-        @Grab('org.reflections:reflections:0.9.9-RC1'),
-        @Grab(group = 'org.eclipse.jgit', module = 'org.eclipse.jgit', version = '3.7.0.201502260915-r'),
-        @Grab(group = 'org.slf4j', module = 'slf4j-api', version = '1.7.2'),
-        @Grab(group = 'org.slf4j', module = 'slf4j-simple', version = '1.7.2'),
-        @GrabExclude(group = 'xml-apis', module = 'xml-apis'),
-//plugin stuff
-        @Grab(group = 'hsqldb', module = 'hsqldb', version = '1.8.0.10'),
-        @Grab(group='javax.mail', module='javax.mail-api', version='1.5.1'),
-        @Grab(group = 'org.apache.poi', module = 'poi', version = '3.11'),
-        @Grab(group='org.quartz-scheduler', module='quartz', version='2.2.1')
-])
-
 def log = LoggerFactory.getLogger(Grip.class)
 
 def bs = new Bootstrap()

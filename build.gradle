@@ -1,0 +1,49 @@
+apply plugin: 'groovy'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.0'
+    compile 'commons-cli:commons-cli:1.2'
+    compile 'org.reflections:reflections:0.9.9-RC1'
+    compile 'org.slf4j:slf4j-api:1.7.2'
+    compile 'org.slf4j:slf4j-simple:1.7.2'
+    compile 'hsqldb:hsqldb:1.8.0.10'
+    compile 'javax.mail:javax.mail-api:1.5.1'
+    compile 'org.apache.poi:poi:3.11'
+    compile 'org.quartz-scheduler:quartz:2.2.1'
+    compile 'org.apache.poi:poi:3.11'
+    compile 'org.codehaus.gpars:gpars:1.2.1'
+
+//    @Grab(group = 'javax.mail', module = 'mail', version = '1.4'),
+
+//            @GrabExclude(group = 'xml-apis', module = 'xml-apis'),
+
+    testCompile 'junit:junit:4.12'
+}
+
+sourceSets.main.resources.srcDirs 'src/main/groovy'
+sourceSets.test.resources.srcDirs 'src/test/groovy'
+
+
+apply plugin: 'idea'
+
+idea {
+    project {
+        languageLevel = '1.8'
+
+        modules.each { m ->
+            m.downloadSources = true
+
+            if (rootProject.subprojects.find { s -> m.name == s.name }) {
+                // use same output dirs as gradle
+                m.inheritOutputDirs = false
+                File bd = new File(m.contentRoot, "build");
+                m.outputDir = new File(bd, "classes/main")
+                m.testOutputDir = new File(bd, "classes/test")
+            }
+        }
+    }
+}

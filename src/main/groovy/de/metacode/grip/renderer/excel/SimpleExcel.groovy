@@ -1,9 +1,5 @@
 package de.metacode.grip.renderer.excel
 
-@Grapes([
-        @Grab(group = 'javax.mail', module = 'mail', version = '1.4'),
-        @Grab(group = 'org.apache.poi', module = 'poi', version = '3.11')
-])
 import de.metacode.grip.util.AttachmentProvider
 import org.apache.poi.hssf.usermodel.HSSFRow
 import org.apache.poi.hssf.usermodel.HSSFSheet

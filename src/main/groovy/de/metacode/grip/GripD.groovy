@@ -17,10 +17,10 @@ Quartz.instance.start()
 
 new SocketActor().start()
 
-def hsql = new File('../../../../../test/de/metacode/grip/hsqlTest.grip')
+def hsql = new File('../../../../../test/groovy/de/metacode/grip/hsqlTest.grip')
 JobProcessor.run(hsql)
 
-def longRunning = new File('../../../../../test/de/metacode/grip/longRunningTest.grip')
+def longRunning = new File('../../../../../test/groovy/de/metacode/grip/longRunningTest.grip')
 JobProcessor.run(longRunning)
 
 
