@@ -1,19 +1,21 @@
 package de.metacode.grip.core
 
+import de.metacode.grip.core.ast.MoveToTopCustomizer
+import de.metacode.grip.core.ast.RemoveCustomizer
 import de.metacode.grip.env.Env
 import de.metacode.grip.env.SqlEnv
 import groovy.util.logging.Slf4j
+import org.codehaus.groovy.control.CompilerConfiguration
 
 /**
  * Created by mloesch on 14.03.15.
  */
-@Slf4j
-class CoreProcessor {
-    static final String ENV = "env"
-    final Binding binding
 
-    CoreProcessor(Binding binding) {
-        this.binding = binding
+@Slf4j
+class CoreProcessor extends InitProcessor {
+
+    CoreProcessor(binding) {
+        super(binding)
     }
 
     def createSql = { Closure c ->
@@ -22,16 +24,6 @@ class CoreProcessor {
         c.resolveStrategy = DELEGATE_ONLY
         c()
         sql
-    }
-
-    def env(String name, Env env) {
-        log.info("HEY HEY $name!")
-        if (!this.binding.hasProperty(ENV)) {
-            this.binding.setProperty(ENV, [:])
-            log.info("setting property env")
-        }
-        Map envs = this.binding.getProperty(ENV) as Map
-        envs.put(name.toLowerCase(), env)
     }
 
     def methodMissing(String name, args) {
@@ -51,4 +43,23 @@ class CoreProcessor {
             c(env.createEnv())
         }
     }
+
+    static void run(File gripScript) {
+        run(gripScript.text)
+    }
+
+    static void run(String gripScript, Binding binding) {
+        def cc = new CompilerConfiguration()
+        cc.addCompilationCustomizers new MoveToTopCustomizer("env")
+        cc.addCompilationCustomizers new RemoveCustomizer("schedule")
+        cc.scriptBaseClass = DelegatingScript.class.name
+        def sh = new GroovyShell(cc)
+
+        def core = new CoreProcessor(binding)
+
+        def grip = sh.parse(gripScript)
+        grip.setDelegate(core)
+        grip.run()
+    }
+
 }

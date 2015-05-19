@@ -1,6 +1,3 @@
-package de.metacode.grip
-
-import de.metacode.grip.env.SqlEnv
 import groovy.sql.Sql
 
 useHsql { Sql sql ->
@@ -21,12 +18,16 @@ useHsql { Sql sql ->
 }
 
 //schedule will be interpreted and executed when grip deamon is used
-schedule("hsqlTest", "0/10 * * * * ?")
+schedule("HsqlTest", "0/10 * * * * ?")
 
 //env will be the first method that is executed
-env("hsql", new SqlEnv(
-        url: "jdbc:hsqldb:mem:testdb",
-        driver: "org.hsqldb.jdbcDriver",
-        user: "sa",
-        pwd: ""
-))
+/*
+env {
+    add("hsql", new SqlEnv(
+            url: "jdbc:hsqldb:mem:testdb",
+            driver: "org.hsqldb.jdbcDriver",
+            user: "sa",
+            pwd: ""
+    ))
+}
+*/

@@ -1,4 +1,4 @@
-schedule("longRunningTest", "0/30 * * * * ?")
+schedule("LongRunningTest", "0/30 * * * * ?")
 
 println "Starting long running test -> Go to sleep for 15 seconds!"
 sleep(15000)

@@ -19,7 +19,7 @@ class DeamonTest extends GroovyTestCase {
 //// interpred job //////////////////////////////////////////////////////////////////////////////////
         log.info('executing dsl engine')
 /// compiler configuration ////////////////////////////////////////////////////////////////////////////
-        def scriptFile = new File('./src/test/groovy/de/metacode/grip/hsqlTest.grip')
+        def scriptFile = new File('./src/test/groovy/de/metacode/grip/HsqlTest.grip')
         JobProcessor.run(scriptFile)
 
         Quartz.instance.shutdown(true)

@@ -42,7 +42,7 @@ class TestJob implements Job {
         def core = new CoreProcessor(binding)
 
         /// grip script /////////////////////////////////////////////////////////////////////////////////////
-        def scriptFile = new File('./test/groovy/de/metacode/grip/hsqlTest.grip')
+        def scriptFile = new File('./test/groovy/de/metacode/grip/HsqlTest.grip')
         def script = scriptFile.text
         def grip = sh.parse(script)
         grip.setDelegate(core)

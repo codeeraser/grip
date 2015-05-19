@@ -16,3 +16,5 @@ grip.iml
 test.log
 test.properties
 test.script
+.gradle
+build
