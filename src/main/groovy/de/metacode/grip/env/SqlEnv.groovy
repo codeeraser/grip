@@ -15,4 +15,8 @@ class SqlEnv implements Env {
     def createEnv() {
         return Sql.newInstance(url, user, pwd, driver)
     }
+
+    static SqlEnv create(Map map) {
+        return new SqlEnv(map);
+    }
 }

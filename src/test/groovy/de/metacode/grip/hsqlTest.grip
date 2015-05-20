@@ -1,33 +1,27 @@
-import groovy.sql.Sql
+log.info("creating a hsql table")
 
-useHsql { Sql sql ->
-    sql.execute("""
-            drop table atable if exists;
-            create table atable (
-            name varchar(50),
-            address varchar(100)
-        )""")
+hsql.execute """drop table atable if exists;
+                  create table atable (
+                      name varchar(50),
+                      address varchar(100)
+                  )"""
 
-    sql.execute("insert into atable(name, address) values('dave', 'some address')")
-    sql.execute("insert into atable(name, address) values('joe', 'another address')")
-    sql.execute("insert into atable(name, address) values('fred', 'yet another address')")
+log.warn("inserting stuff into table")
 
-    sql.rows("select * from atable").each { row ->
-        println("atable [ ${row.name}, ${row.address} ]")
-    }
+hsql.execute "insert into atable(name, address) values('dave', 'some address')"
+hsql.execute "insert into atable(name, address) values('joe', 'another address')"
+hsql.execute "insert into atable(name, address) values('fred', 'yet another address')"
+
+
+log.debug("printing out table content")
+
+hsql.rows("select * from atable").each { row ->
+    println("atable [ ${row.name}, ${row.address} ]")
 }
 
-//schedule will be interpreted and executed when grip deamon is used
-schedule("HsqlTest", "0/10 * * * * ?")
 
-//env will be the first method that is executed
-/*
-env {
-    add("hsql", new SqlEnv(
-            url: "jdbc:hsqldb:mem:testdb",
-            driver: "org.hsqldb.jdbcDriver",
-            user: "sa",
-            pwd: ""
-    ))
+schedule "HsqlTest", "0/10 * * * * ?"
+
+init {
+    println "nothing to init"
 }
-*/

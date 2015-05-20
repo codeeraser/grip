@@ -16,18 +16,6 @@ class Quartz {
         sched.start()
     }
 
-    def addShutdownHook(Closure c) {
-        sched.addShutdownHook(c)
-    }
-
-    Scheduler getSched() {
-        sched
-    }
-
-    def shutdown(boolean waitForJobsToComplete) {
-        sched.shutdown(waitForJobsToComplete)
-    }
-
     def schedule(JobDetail job, Trigger trigger) {
         sched.scheduleJob(job, trigger);
     }

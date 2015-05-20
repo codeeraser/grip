@@ -1,4 +1,8 @@
 apply plugin: 'groovy'
+apply plugin: 'application'
+version = '1.0'
+mainClassName='de.metacode.grip.Grip'
+
 
 repositories {
     mavenCentral()
@@ -23,6 +27,16 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
 }
+
+task uberjar(type: Jar,dependsOn:[':compileJava',':compileGroovy']) {
+    from files(sourceSets.main.output.classesDir)
+    from configurations.runtime.asFileTree.files.collect { zipTree(it) }
+
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+}
+
 
 sourceSets.main.resources.srcDirs 'src/main/groovy'
 sourceSets.test.resources.srcDirs 'src/test/groovy'

@@ -2,6 +2,7 @@ package de.metacode.grip.core
 
 import de.metacode.grip.core.ast.HighlanderCustomizer
 import de.metacode.grip.env.Env
+import de.metacode.grip.env.SqlEnv
 import groovy.util.logging.Slf4j
 import org.codehaus.groovy.control.CompilerConfiguration
 
@@ -19,11 +20,16 @@ class InitProcessor {
         this.binding = binding
     }
 
-    def env(Closure c) {
+    def sql(Map map) {
+        new SqlEnv(map)
+    }
+
+
+    def init(Closure c) {
         c()
     }
 
-    def add(String name, Env env) {
+    def env(String name, Env env) {
         log.info("init env $name")
         if (!this.binding.hasProperty(ENV)) {
             this.binding.setProperty(ENV, [:])
@@ -34,7 +40,7 @@ class InitProcessor {
 
     static void run(File gripScript, Binding binding) {
         def cc = new CompilerConfiguration()
-        cc.addCompilationCustomizers new HighlanderCustomizer("env")
+        cc.addCompilationCustomizers new HighlanderCustomizer("init")
         cc.scriptBaseClass = DelegatingScript.class.name
         def sh = new GroovyShell(cc)
 

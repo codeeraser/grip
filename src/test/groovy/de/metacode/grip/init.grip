@@ -1,13 +1,11 @@
-import de.metacode.grip.env.SqlEnv
 import org.hsqldb.Server
 
-env {
-    add("hsql", new SqlEnv(
+init {
+    env "hsql", sql(
             url: "jdbc:hsqldb:mem:testdb",
             driver: "org.hsqldb.jdbcDriver",
             user: "sa",
-            pwd: ""
-    ))
+            pwd: "")
 
     Server.main()
 }
