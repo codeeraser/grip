@@ -1,9 +1,9 @@
 package de.metacode.grip.core
 
 import de.metacode.grip.core.ast.HighlanderCustomizer
-import groovy.util.logging.Slf4j
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.quartz.*
+import org.slf4j.LoggerFactory
 
 import static org.quartz.CronScheduleBuilder.cronSchedule
 import static org.quartz.TriggerBuilder.newTrigger
@@ -12,30 +12,25 @@ import static org.quartz.TriggerBuilder.newTrigger
  * Created by mloesch on 29.04.15.
  */
 
-@Slf4j
 class JobProcessor {
-    final Binding binding
     final String script
+    final Map context
 
-    static class JobShell implements Job {
-        @Override
-        void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-            CoreProcessor.run(jobExecutionContext.jobDetail.jobDataMap.getString("script"),
-                    jobExecutionContext.jobDetail.jobDataMap["binding"] as Binding)
-        }
-    }
-
-    JobProcessor(Binding binding, String script) {
-        this.binding = binding
+    JobProcessor(Map context, String script) {
+        this.context = new HashMap(context)
         this.script = script
     }
 
     void schedule(String name, String cronExpression) {
+        def log = LoggerFactory.getLogger(name)
         log.info("scheduling job $name!")
 
         def map = new JobDataMap()
         map["script"] = this.script
-        map["binding"] = this.binding
+        map["context"] = this.context
+        println "SETTING binding[name] tp $name"
+        map["name"] = name
+        this.context.put("name",name)
 
         def job = JobBuilder.newJob(JobShell.class)
                 .usingJobData(map)
@@ -54,14 +49,14 @@ class JobProcessor {
         Quartz.instance.schedule(job, trigger);
     }
 
-    static void run(File gripScript, Binding binding) {
+    static void run(File gripScript, Map context) {
         def cc = new CompilerConfiguration()
         cc.addCompilationCustomizers new HighlanderCustomizer("schedule")
         cc.scriptBaseClass = DelegatingScript.class.name
         def sh = new GroovyShell(cc)
 
         def script = gripScript.text
-        def job = new JobProcessor(binding, script)
+        def job = new JobProcessor(context, script)
 
         def grip = sh.parse(script)
         grip.setDelegate(job)

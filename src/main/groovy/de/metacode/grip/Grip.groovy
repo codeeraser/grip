@@ -14,10 +14,10 @@ import org.slf4j.LoggerFactory
 
 def log = LoggerFactory.getLogger(Grip.class)
 
-def binding = new Binding()
+def context = [:]
 
 def home = System.getProperty("user.home")
-loadInitScript(new File("""$home/.grip/init.grip"""), log, binding)
+loadInitScript(new File("""$home/.grip/init.grip"""), log, context)
 
 def workdir = null
 
@@ -28,7 +28,7 @@ if (props.exists()) {
         workdir = config.workdir
     }
 }
-if (!workdir) {
+if (System.getProperty("workdir") != null) {
     workdir = System.getProperty("workdir")
 }
 if (!workdir) {
@@ -36,20 +36,20 @@ if (!workdir) {
 }
 
 def scriptDir = new File(workdir)
-loadInitScript(new File(scriptDir.absolutePath, "init.grip"), log, binding)
+loadInitScript(new File(scriptDir.absolutePath, "init.grip"), log, context)
 
 Quartz.instance.start()
 new SocketActor().start()
 
 scriptDir.eachFileMatch(FileType.FILES, ~/.*grip$/) { File file ->
     if (!file.name.endsWith("init.grip")) {
-        JobProcessor.run(file, binding)
+        JobProcessor.run(file, context)
     }
 }
 
-def loadInitScript(File init, Logger log, Binding binding) {
+def loadInitScript(File init, Logger log, Map context) {
     if (init.exists()) {
         log.info("Processing init script $init.absoluteFile")
-        InitProcessor.run(init, binding)
+        InitProcessor.run(init, context)
     }
 }

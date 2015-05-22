@@ -1,5 +1,5 @@
 schedule("LongRunningTest", "0/30 * * * * ?")
 
-println "Starting long running test -> Go to sleep for 15 seconds!"
+log.info "Starting long running test -> Go to sleep for 15 seconds!"
 sleep(15000)
-println "Long running test done!"
+log.info "Long running test done!"

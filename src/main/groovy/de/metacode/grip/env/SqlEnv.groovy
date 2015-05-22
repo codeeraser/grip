@@ -16,7 +16,7 @@ class SqlEnv implements Env {
     Sql cache = null;
 
     @Override
-    def createEnv() {
+    def Sql createEnv() {
         if (cache != null && !cache.connection.isClosed()) {
             return cache;
         }

@@ -6,6 +6,7 @@ import de.metacode.grip.env.SqlEnv
 import groovy.grape.Grape
 import groovy.util.logging.Slf4j
 import org.codehaus.groovy.control.CompilerConfiguration
+import org.slf4j.LoggerFactory
 
 /**
  * Created by mloesch on 19.05.15.
@@ -15,10 +16,10 @@ import org.codehaus.groovy.control.CompilerConfiguration
 class InitProcessor {
     static final String ENV = "env"
 
-    Binding binding;
+    Map context
 
-    InitProcessor(Binding binding) {
-        this.binding = binding
+    InitProcessor(Map context) {
+        this.context = context
     }
 
     static def sql(Map map) {
@@ -32,10 +33,10 @@ class InitProcessor {
 
     def env(String name, Env env) {
         log.info("init env $name")
-        if (!this.binding.hasProperty(ENV)) {
-            this.binding.setProperty(ENV, [:])
+        if (!this.context.containsKey(ENV)) {
+            this.context.put(ENV, [:])
         }
-        Map envs = this.binding.getProperty(ENV) as Map
+        Map envs = this.context.get(ENV) as Map
         envs.put(name.toLowerCase(), env)
     }
 
@@ -43,14 +44,14 @@ class InitProcessor {
         Grape.grab(classLoader: this.class.classLoader.rootLoader, dependencies)
     }
 
-    static void run(File gripScript, Binding binding) {
+    static void run(File gripScript, Map context) {
         def cc = new CompilerConfiguration()
         cc.addCompilationCustomizers new HighlanderCustomizer("init")
         cc.scriptBaseClass = DelegatingScript.class.name
         def sh = new GroovyShell(cc)
 
         def script = gripScript.text
-        def env = new InitProcessor(binding)
+        def env = new InitProcessor(context)
 
         def grip = sh.parse(script)
         grip.setDelegate(env)

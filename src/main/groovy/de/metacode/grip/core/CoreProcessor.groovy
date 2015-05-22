@@ -6,29 +6,31 @@ import de.metacode.grip.env.Env
 import de.metacode.grip.renderer.excel.SimpleExcel
 import de.metacode.grip.util.AttachmentProvider
 import de.metacode.grip.util.Mail
-import groovy.util.logging.Slf4j
 import org.codehaus.groovy.control.CompilerConfiguration
+import org.slf4j.LoggerFactory
 
 /**
  * Created by mloesch on 14.03.15.
  */
 
-@Slf4j
 class CoreProcessor extends InitProcessor {
 
-    CoreProcessor(binding) {
-        super(binding)
+    def log
+
+    CoreProcessor(Map context) {
+        super(context)
+        this.log = LoggerFactory.getLogger(context.get('name'))
     }
 
     def methodMissing(String name, args) {
         log.info("methodMissing calls for $name")
-        log.info(this.binding.properties.toMapString())
-        Map envs = this.binding.getProperty(ENV) as Map<String, Env>
+        log.info(this.context.toMapString())
+        Map envs = this.context.get(ENV) as Map<String, Env>
         if (!envs.containsKey(name)) {
             return;
         }
-        if (this.binding.hasVariable(name)) {
-            c(this.binding.getVariable(name))
+        if (this.context.containsKey(name)) {
+            c(this.context.get(name))
             return;
         }
         Env env = envs.get(name)
@@ -40,7 +42,7 @@ class CoreProcessor extends InitProcessor {
     }
 
     def propertyMissing(String name) {
-        Map envs = this.binding.getProperty(ENV) as Map<String, Env>
+        Map envs = this.context.get(ENV) as Map<String, Env>
         if (envs.containsKey(name)) {
             Env env = envs.get(name)
             return env.createEnv()
@@ -55,18 +57,18 @@ class CoreProcessor extends InitProcessor {
         Mail.send(params, attachmentProvider, filename)
     }
 
-    static void run(File gripScript, Binding binding) {
-        run(gripScript.text, binding)
+    static void run(File gripScript, Map context) {
+        run(gripScript.text, context)
     }
 
-    static void run(String gripScript, Binding binding) {
+    static void run(String gripScript, Map context) {
         def cc = new CompilerConfiguration()
         cc.addCompilationCustomizers new MoveToTopCustomizer("init")
         cc.addCompilationCustomizers new RemoveCustomizer("schedule")
         cc.scriptBaseClass = DelegatingScript.class.name
         def sh = new GroovyShell(cc)
 
-        def core = new CoreProcessor(binding)
+        def core = new CoreProcessor(context)
 
         def grip = sh.parse(gripScript)
         grip.setDelegate(core)
