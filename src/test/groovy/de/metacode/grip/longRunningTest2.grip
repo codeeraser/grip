@@ -1,0 +1,7 @@
+package de.metacode.grip
+
+schedule("LongRunningTest2", "0/15 * * * * ?")
+
+log.info "Starting long running test 2 -> Go to sleep for 15 seconds!"
+sleep(10000)
+log.info "Long running test 2 done!"
