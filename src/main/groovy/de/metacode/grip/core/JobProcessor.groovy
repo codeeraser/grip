@@ -14,15 +14,14 @@ import static org.quartz.TriggerBuilder.newTrigger
 
 @Slf4j
 class JobProcessor {
-    static final String JOB = "job"
     final Binding binding
     final String script
 
     static class JobShell implements Job {
         @Override
         void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-            CoreProcessor.run(jobExecutionContext.getJobDetail().jobDataMap.getString("script"),
-                    jobExecutionContext.getJobDetail().jobDataMap.get("binding") as Binding)
+            CoreProcessor.run(jobExecutionContext.jobDetail.jobDataMap.getString("script"),
+                    jobExecutionContext.jobDetail.jobDataMap["binding"] as Binding)
         }
     }
 
@@ -35,18 +34,22 @@ class JobProcessor {
         log.info("scheduling job $name!")
 
         def map = new JobDataMap()
-        map.put("script", this.script)
-        map.put("binding", this.binding)
+        map["script"] = this.script
+        map["binding"] = this.binding
 
         def job = JobBuilder.newJob(JobShell.class)
                 .usingJobData(map)
-                .withIdentity(name)
+                .withIdentity(name, name)
                 .build();
-        def trigger = newTrigger()
-                .withIdentity(name)
-                .withSchedule(cronSchedule(cronExpression))
-//                .startNow()
-                .build();
+
+        def builder = newTrigger()
+                .withIdentity(name, name)
+        if ("now".equals(cronExpression)) {
+            builder.startNow();
+        } else {
+            builder.withSchedule(cronSchedule(cronExpression))
+        }
+        def trigger = builder.build();
 
         Quartz.instance.schedule(job, trigger);
     }

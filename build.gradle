@@ -1,11 +1,17 @@
 apply plugin: 'groovy'
 apply plugin: 'application'
 version = '1.0'
-mainClassName='de.metacode.grip.Grip'
+mainClassName = 'de.metacode.grip.Grip'
 
 
 repositories {
     mavenCentral()
+}
+
+configurations {
+    ivy
+    all*.exclude group: 'xml-apis'
+    all*.exclude group: 'xerces'
 }
 
 dependencies {
@@ -15,20 +21,22 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.2'
     compile 'org.slf4j:slf4j-simple:1.7.2'
     compile 'hsqldb:hsqldb:1.8.0.10'
-    compile 'javax.mail:javax.mail-api:1.5.1'
+//    compile 'javax.mail:javax.mail-api:1.5.1'
+    compile 'javax.mail:mail:1.4'
     compile 'org.apache.poi:poi:3.11'
     compile 'org.quartz-scheduler:quartz:2.2.1'
     compile 'org.apache.poi:poi:3.11'
     compile 'org.codehaus.gpars:gpars:1.2.1'
-
-//    @Grab(group = 'javax.mail', module = 'mail', version = '1.4'),
-
-//            @GrabExclude(group = 'xml-apis', module = 'xml-apis'),
-
+    compile "org.apache.ivy:ivy:2.4.0"
+    ivy "org.apache.ivy:ivy:2.4.0"
     testCompile 'junit:junit:4.12'
 }
 
-task uberjar(type: Jar,dependsOn:[':compileJava',':compileGroovy']) {
+tasks.withType(GroovyCompile) {
+    groovyClasspath += configurations.ivy
+}
+
+task uberjar(type: Jar, dependsOn: [':compileJava', ':compileGroovy']) {
     from files(sourceSets.main.output.classesDir)
     from configurations.runtime.asFileTree.files.collect { zipTree(it) }
 

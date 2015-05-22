@@ -3,6 +3,9 @@ package de.metacode.grip.core
 import de.metacode.grip.core.ast.MoveToTopCustomizer
 import de.metacode.grip.core.ast.RemoveCustomizer
 import de.metacode.grip.env.Env
+import de.metacode.grip.renderer.excel.SimpleExcel
+import de.metacode.grip.util.AttachmentProvider
+import de.metacode.grip.util.Mail
 import groovy.util.logging.Slf4j
 import org.codehaus.groovy.control.CompilerConfiguration
 
@@ -21,14 +24,19 @@ class CoreProcessor extends InitProcessor {
         log.info("methodMissing calls for $name")
         log.info(this.binding.properties.toMapString())
         Map envs = this.binding.getProperty(ENV) as Map<String, Env>
-        if (envs.containsKey(name)) {
-            Env env = envs.get(name)
-            if (!args || args.length == 0 || (!(args[0] instanceof Closure))) {
-                throw new IllegalArgumentException("$name needs a closure as argument")
-            }
-            Closure c = args[0] as Closure
-            c(env.createEnv())
+        if (!envs.containsKey(name)) {
+            return;
         }
+        if (this.binding.hasVariable(name)) {
+            c(this.binding.getVariable(name))
+            return;
+        }
+        Env env = envs.get(name)
+        if (!args || args.length == 0 || (!(args[0] instanceof Closure))) {
+            throw new IllegalArgumentException("$name needs a closure as argument")
+        }
+        Closure c = args[0] as Closure
+        c(env.createEnv())
     }
 
     def propertyMissing(String name) {
@@ -37,6 +45,14 @@ class CoreProcessor extends InitProcessor {
             Env env = envs.get(name)
             return env.createEnv()
         }
+    }
+
+    def newSimpleXls() {
+        new SimpleExcel()
+    }
+
+    def sendmail(params, AttachmentProvider attachmentProvider, String filename) {
+        Mail.send(params, attachmentProvider, filename)
     }
 
     static void run(File gripScript, Binding binding) {
@@ -56,5 +72,4 @@ class CoreProcessor extends InitProcessor {
         grip.setDelegate(core)
         grip.run()
     }
-
 }

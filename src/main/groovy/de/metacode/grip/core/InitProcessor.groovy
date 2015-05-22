@@ -3,6 +3,7 @@ package de.metacode.grip.core
 import de.metacode.grip.core.ast.HighlanderCustomizer
 import de.metacode.grip.env.Env
 import de.metacode.grip.env.SqlEnv
+import groovy.grape.Grape
 import groovy.util.logging.Slf4j
 import org.codehaus.groovy.control.CompilerConfiguration
 
@@ -14,18 +15,18 @@ import org.codehaus.groovy.control.CompilerConfiguration
 class InitProcessor {
     static final String ENV = "env"
 
-    def binding;
+    Binding binding;
 
-    InitProcessor(binding) {
+    InitProcessor(Binding binding) {
         this.binding = binding
     }
 
-    def sql(Map map) {
+    static def sql(Map map) {
         new SqlEnv(map)
     }
 
 
-    def init(Closure c) {
+    static def init(Closure c) {
         c()
     }
 
@@ -36,6 +37,10 @@ class InitProcessor {
         }
         Map envs = this.binding.getProperty(ENV) as Map
         envs.put(name.toLowerCase(), env)
+    }
+
+    def grab(Map dependencies) {
+        Grape.grab(classLoader: this.class.classLoader.rootLoader, dependencies)
     }
 
     static void run(File gripScript, Binding binding) {
@@ -51,6 +56,4 @@ class InitProcessor {
         grip.setDelegate(env)
         grip.run()
     }
-
-
 }
