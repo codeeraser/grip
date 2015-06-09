@@ -1,0 +1,24 @@
+<configuration>
+    <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <!-- in the absence of the class attribute, it is assumed that the
+             desired discriminator type is
+             ch.qos.logback.classic.sift.MDCBasedDiscriminator -->
+        <discriminator>
+            <key>loggerFileName</key>
+            <defaultValue>Grip</defaultValue>
+        </discriminator>
+        <sift>
+            <appender name="FILE-${userid}" class="ch.qos.logback.core.FileAppender">
+                <file>${log.dir}/${loggerFileName}.log</file>
+                <append>false</append>
+                <layout class="ch.qos.logback.classic.PatternLayout">
+                    <pattern>%d [%thread] %level - %msg%n</pattern>
+                </layout>
+            </appender>
+        </sift>
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="SIFT" />
+    </root>
+</configuration>

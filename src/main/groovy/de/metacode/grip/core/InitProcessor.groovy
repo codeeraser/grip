@@ -6,7 +6,6 @@ import de.metacode.grip.env.SqlEnv
 import groovy.grape.Grape
 import groovy.util.logging.Slf4j
 import org.codehaus.groovy.control.CompilerConfiguration
-import org.slf4j.LoggerFactory
 
 /**
  * Created by mloesch on 19.05.15.

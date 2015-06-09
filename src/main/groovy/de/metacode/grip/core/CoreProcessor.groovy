@@ -8,6 +8,7 @@ import de.metacode.grip.util.AttachmentProvider
 import de.metacode.grip.util.Mail
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 
 /**
  * Created by mloesch on 14.03.15.
@@ -21,6 +22,36 @@ class CoreProcessor extends InitProcessor {
         super(context)
         this.log = LoggerFactory.getLogger(context.get('name'))
     }
+
+    def getName() {
+        this.context.get('name')
+    }
+
+    //TODO move logger methods to a delegate ///////////////
+    def info(String text) {
+        MDC.put("loggerFileName", getName())
+        this.log.info(text)
+        MDC.remove("loggerFileName")
+    }
+
+    def debug(String text) {
+        MDC.put("loggerFileName", getName())
+        this.log.debug(text)
+        MDC.remove("loggerFileName")
+    }
+
+    def warn(String text) {
+        MDC.put("loggerFileName", getName())
+        this.log.warn(text)
+        MDC.remove("loggerFileName")
+    }
+
+    def trace(String text) {
+        MDC.put("loggerFileName", getName())
+        this.log.trace(text)
+        MDC.remove("loggerFileName")
+    }
+    //TODO end /////////////////////////////////////////////
 
     def methodMissing(String name, args) {
         log.info("methodMissing calls for $name")

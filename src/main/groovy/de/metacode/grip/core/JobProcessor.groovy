@@ -4,6 +4,7 @@ import de.metacode.grip.core.ast.HighlanderCustomizer
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.quartz.*
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule
 import static org.quartz.TriggerBuilder.newTrigger
@@ -22,8 +23,10 @@ class JobProcessor {
     }
 
     void schedule(String name, String cronExpression) {
+        MDC.put("loggerFileName", name);
         def log = LoggerFactory.getLogger(name)
         log.info("scheduling job $name!")
+        MDC.remove("loggerFileName");
 
         def map = new JobDataMap()
         map["script"] = this.script

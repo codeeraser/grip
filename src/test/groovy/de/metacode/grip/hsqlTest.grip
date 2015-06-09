@@ -1,4 +1,4 @@
-log.info "creating a hsql table"
+info "creating a hsql table"
 
 hsql.execute """drop table atable if exists;
                   create table atable (
@@ -6,14 +6,14 @@ hsql.execute """drop table atable if exists;
                       address varchar(100)
                   )"""
 
-log.warn "inserting stuff into table"
+warn "inserting stuff into table"
 
 hsql.execute "insert into atable(name, address) values('dave', 'some address')"
 hsql.execute "insert into atable(name, address) values('joe', 'another address')"
 hsql.execute "insert into atable(name, address) values('fred', 'yet another address')"
 
 
-log.debug "printing out table content"
+debug "printing out table content"
 
 hsql.rows("select * from atable").each { row ->
     println("atable [ ${row.name}, ${row.address} ]")
