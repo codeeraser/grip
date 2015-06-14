@@ -2,7 +2,7 @@ package de.metacode.grip
 
 import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.joran.JoranConfigurator
-import ch.qos.logback.core.joran.spi.JoranException
+import ch.qos.logback.core.util.StatusPrinter
 import de.metacode.grip.core.InitProcessor
 import de.metacode.grip.core.JobProcessor
 import de.metacode.grip.core.Quartz
@@ -10,8 +10,6 @@ import de.metacode.grip.core.SocketActor
 import groovy.io.FileType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import ch.qos.logback.core.util.StatusPrinter;
-
 
 /**
  * Created by mloesch on 06.05.15.
@@ -23,19 +21,7 @@ def log = LoggerFactory.getLogger(Grip.class)
 LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
 JoranConfigurator configurator = new JoranConfigurator();
 configurator.setContext(lc);
-
 StatusPrinter.print(lc);
-
-/*
-lc.reset();
-
-try {
-    configurator.doConfigure(ClassLoader.getSystemClassLoader().getResource("logback.xml").getFile());
-} catch (JoranException je) {
-    StatusPrinter.print(context);
-    Assert.fail("Erreur de chargement des paramètre logback");
-}
-*/
 
 def context = [:]
 

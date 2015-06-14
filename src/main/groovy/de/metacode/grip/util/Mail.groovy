@@ -1,5 +1,7 @@
 package de.metacode.grip.util
 
+import groovy.util.logging.Slf4j
+
 import javax.activation.DataHandler
 import javax.mail.Message
 import javax.mail.MessagingException
@@ -14,9 +16,12 @@ import javax.mail.internet.MimeMultipart
  * Created by mloesch on 15.03.15.
  */
 
+@Slf4j
 class Mail {
 
     static def send(params, AttachmentProvider attachmentProvider, String filename) {
+        log.debug("sending mail with params $params")
+
         String smtpHost = params.smtpHost
         String from = params.from
         String to = params.to
@@ -55,5 +60,6 @@ class Mail {
         } finally {
             Thread.currentThread().setContextClassLoader(classLoader);
         }
+        log.debug("sent mail succesfully")
     }
 }
