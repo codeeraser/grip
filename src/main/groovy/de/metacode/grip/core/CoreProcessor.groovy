@@ -15,30 +15,32 @@ import org.slf4j.LoggerFactory
  */
 
 class CoreProcessor extends InitProcessor {
-    @Delegate Logger log
+    private final @Delegate Logger log
+    private final Binding binding
 
-    CoreProcessor(Map context) {
+    CoreProcessor(Map context, Binding binding) {
         super(context)
+        this.binding = binding
         this.log = LoggerFactory.getLogger(context['name'] as String)
     }
 
     def methodMissing(String name, args) {
-        log.info("methodMissing calls for $name")
-        log.info(this.context.toMapString())
+        this.log.info("methodMissing calls for $name")
+        this.log.info(this.context.toMapString())
         Map envs = this.context[ENV] as Map<String, Env>
         if (!envs.containsKey(name)) {
             return;
         }
         if (this.context.containsKey(name)) {
             c(this.context[name])
-            return;
+        } else {
+            Env env = envs[name]
+            if (!args || args.length == 0 || (!(args[0] instanceof Closure))) {
+                throw new IllegalArgumentException("$name needs a closure as argument")
+            }
+            Closure c = args[0] as Closure
+            c(env.createEnv())
         }
-        Env env = envs[name]
-        if (!args || args.length == 0 || (!(args[0] instanceof Closure))) {
-            throw new IllegalArgumentException("$name needs a closure as argument")
-        }
-        Closure c = args[0] as Closure
-        c(env.createEnv())
     }
 
     def propertyMissing(String name) {
@@ -47,6 +49,7 @@ class CoreProcessor extends InitProcessor {
             Env env = envs[name]
             return env.createEnv()
         }
+        this.binding[name]
     }
 
     def newSimpleXls() {
@@ -66,9 +69,10 @@ class CoreProcessor extends InitProcessor {
         cc.addCompilationCustomizers new MoveToTopCustomizer("init")
         cc.addCompilationCustomizers new RemoveCustomizer("schedule")
         cc.scriptBaseClass = DelegatingScript.class.name
-        def sh = new GroovyShell(cc)
 
-        def core = new CoreProcessor(context)
+        def binding = new Binding()
+        def sh = new GroovyShell(binding, cc)
+        def core = new CoreProcessor(context, binding)
 
         def grip = sh.parse(gripScript)
         grip.setDelegate(core)
