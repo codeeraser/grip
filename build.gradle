@@ -38,14 +38,14 @@ tasks.withType(GroovyCompile) {
 }
 
 task uberjar(type: Jar, dependsOn: [':compileJava', ':compileGroovy']) {
-    from files(sourceSets.main.output.classesDir)
+    from files(sourceSets.main.output.resourcesDir)
+    from files(sourceSets.main.allSource)
     from configurations.runtime.asFileTree.files.collect { zipTree(it) }
 
     manifest {
         attributes 'Main-Class': mainClassName
     }
 }
-
 
 sourceSets.main.resources.srcDirs 'src/main/groovy'
 sourceSets.test.resources.srcDirs 'src/test/groovy'

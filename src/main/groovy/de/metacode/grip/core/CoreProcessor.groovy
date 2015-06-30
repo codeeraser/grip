@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory
  */
 
 class CoreProcessor extends InitProcessor {
-    private final @Delegate Logger log
+    final @Delegate Logger log
     private final Binding binding
 
     CoreProcessor(Map context, Binding binding) {
@@ -25,10 +25,9 @@ class CoreProcessor extends InitProcessor {
     }
 
     def methodMissing(String name, args) {
-        this.log.info("methodMissing calls for $name")
-        this.log.info(this.context.toMapString())
         Map envs = this.context[ENV] as Map<String, Env>
         if (!envs.containsKey(name)) {
+            this.log.info("methodMissing call for $name")
             return;
         }
         if (this.context.containsKey(name)) {
@@ -52,16 +51,12 @@ class CoreProcessor extends InitProcessor {
         this.binding[name]
     }
 
-    def newSimpleXls() {
+    static SimpleExcel newSimpleXls() {
         new SimpleExcel()
     }
 
-    def sendmail(params, AttachmentProvider attachmentProvider, String filename) {
+    static def sendmail(Map params, AttachmentProvider attachmentProvider, String filename) {
         Mail.send(params, attachmentProvider, filename)
-    }
-
-    static void run(File gripScript, Map context) {
-        run(gripScript.text, context)
     }
 
     static void run(String gripScript, Map context) {

@@ -10,7 +10,16 @@ import org.quartz.impl.StdSchedulerFactory
  */
 @Singleton
 class Quartz {
-    Scheduler sched = new StdSchedulerFactory().getScheduler()
+    private final static Properties props = new Properties();
+
+    static {
+        props.setProperty("org.quartz.scheduler.skipUpdateCheck", "true");
+        props.setProperty("org.quartz.jobStore.class", "org.quartz.simpl.RAMJobStore");
+        props.setProperty("org.quartz.threadPool.class", "org.quartz.simpl.SimpleThreadPool");
+        props.setProperty("org.quartz.threadPool.threadCount", "4");
+    }
+
+    Scheduler sched = new StdSchedulerFactory().scheduler
 
     def start() {
         sched.start()

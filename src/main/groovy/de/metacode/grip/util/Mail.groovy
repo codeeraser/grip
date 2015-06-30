@@ -19,7 +19,7 @@ import javax.mail.internet.MimeMultipart
 @Slf4j
 class Mail {
 
-    static def send(params, AttachmentProvider attachmentProvider, String filename) {
+    static def send(Map params, AttachmentProvider attachmentProvider, String filename) {
         log.debug("sending mail with params $params")
 
         String smtpHost = params.smtpHost
