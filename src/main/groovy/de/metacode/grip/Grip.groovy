@@ -18,9 +18,9 @@ import org.slf4j.LoggerFactory
 def log = LoggerFactory.getLogger(Grip.class)
 
 // assume SLF4J is bound to logback in the current environment
-LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+LoggerContext lc = (LoggerContext) LoggerFactory.ILoggerFactory;
 JoranConfigurator configurator = new JoranConfigurator();
-configurator.setContext(lc);
+configurator.context = lc;
 StatusPrinter.print(lc);
 
 def context = [:]
@@ -48,7 +48,7 @@ def scriptDir = new File(workdir)
 loadInitScript(new File(scriptDir.absolutePath, "init.grip"), log, context)
 
 Quartz.instance.start()
-new SocketActor().start()
+def sa = new SocketActor().start()
 
 scriptDir.eachFileMatch(FileType.FILES, ~/.*grip$/) { File file ->
     if (!file.name.endsWith("init.grip")) {
@@ -62,3 +62,6 @@ def loadInitScript(File init, Logger log, Map context) {
         InitProcessor.run(init, context)
     }
 }
+
+sa.join()
+Quartz.instance.stop()

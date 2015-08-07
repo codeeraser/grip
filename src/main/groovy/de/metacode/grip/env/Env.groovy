@@ -5,4 +5,5 @@ package de.metacode.grip.env
  */
 interface Env {
     def createEnv()
+    def destroy()
 }

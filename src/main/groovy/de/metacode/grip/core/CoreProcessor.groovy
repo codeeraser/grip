@@ -3,9 +3,9 @@ package de.metacode.grip.core
 import de.metacode.grip.core.ast.MoveToTopCustomizer
 import de.metacode.grip.core.ast.RemoveCustomizer
 import de.metacode.grip.env.Env
-import de.metacode.grip.renderer.excel.SimpleExcel
-import de.metacode.grip.util.AttachmentProvider
-import de.metacode.grip.util.Mail
+import de.metacode.grip.renderer.Csv
+import de.metacode.grip.renderer.SimpleExcel
+import de.metacode.grip.renderer.SysOut
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -25,7 +25,6 @@ class CoreProcessor extends InitProcessor {
     }
 
     def methodMissing(String name, args) {
-        Map envs = this.context[ENV] as Map<String, Env>
         if (!envs.containsKey(name)) {
             this.log.info("methodMissing call for $name")
             return;
@@ -43,7 +42,6 @@ class CoreProcessor extends InitProcessor {
     }
 
     def propertyMissing(String name) {
-        Map envs = this.context[ENV] as Map<String, Env>
         if (envs.containsKey(name)) {
             Env env = envs[name]
             return env.createEnv()
@@ -55,8 +53,12 @@ class CoreProcessor extends InitProcessor {
         new SimpleExcel()
     }
 
-    static def sendmail(Map params, AttachmentProvider attachmentProvider, String filename) {
-        Mail.send(params, attachmentProvider, filename)
+    static Csv newCsv(String separator = ',') {
+        new Csv(separator)
+    }
+
+    static SysOut newSysOut() {
+        return new SysOut()
     }
 
     static void run(String gripScript, Map context) {
@@ -72,5 +74,15 @@ class CoreProcessor extends InitProcessor {
         def grip = sh.parse(gripScript)
         grip.setDelegate(core)
         grip.run()
+
+        getEnvs(context)?.values()*.destroy()
+    }
+
+    private Map<String, Env> getEnvs() {
+        getEnvs(this.context)?: Collections.emptyMap()
+    }
+
+    private static Map<String, Env> getEnvs(Map context) {
+        context[ENV] as Map<String, Env>
     }
 }

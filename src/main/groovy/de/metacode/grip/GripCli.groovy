@@ -2,6 +2,7 @@ package de.metacode.grip
 
 import de.metacode.grip.core.Bootstrap
 import de.metacode.grip.core.CoreProcessor
+import de.metacode.grip.core.InitProcessor
 import de.metacode.grip.core.ast.MoveToTopCustomizer
 import de.metacode.grip.core.ast.RemoveCustomizer
 import org.codehaus.groovy.control.CompilerConfiguration
@@ -13,8 +14,8 @@ import org.slf4j.LoggerFactory
 
 def log = LoggerFactory.getLogger(GripCli.class)
 
-def bs = new Bootstrap()
-bs.run()
+//def bs = new Bootstrap()
+//bs.run()
 
 /// Cli /////////////////////////////////////////////////////////////////////////////////////////////
 def cli = new CliBuilder(usage: 'groovy GripCli.groovyovy -f[h] script')
@@ -30,39 +31,13 @@ if (opt.h || !opt.getInner().getOptions()) {
     return
 }
 
-/// compiler configuration //////////////////////////////////////////////////////////////////////////
-def cc = new CompilerConfiguration()
-cc.scriptBaseClass = DelegatingScript.class.name
-cc.addCompilationCustomizers new MoveToTopCustomizer("env")
-cc.addCompilationCustomizers new RemoveCustomizer("schedule")
-def sh = new GroovyShell(cc)
-
-//This is how create-methods for plugin environments could be injected
-/*
-CoreProcessor.metaClass.createSql = { Closure c ->
-    def sql = new SqlEnv()
-    c.delegate = sql
-    c.resolveStrategy = Closure.DELEGATE_ONLY
-    c()
-    sql
-}
-*/
-
-def core = new CoreProcessor(this.binding)
-
-
-log.info(this.binding.properties.toMapString())
+def context = [name: 'gripCli']
 /// init script /////////////////////////////////////////////////////////////////////////////////////
 def home = System.getProperty("user.home")
-def initScript = new File("""$home/.grip/env.grip""")
+def initScript = new File("""$home/.grip/init.grip""")
 if (initScript.exists()) {
-    log.info("RUN ENV: \n$initScript.text ")
-    def init = sh.parse(initScript.text)
-    init.setDelegate(core)
-    init.run()
+    InitProcessor.run(initScript, context)
 }
-
-log.info(this.binding.properties.toMapString())
 
 /// grip script /////////////////////////////////////////////////////////////////////////////////////
 def scriptFile = new File(opt.f as String)
@@ -71,8 +46,4 @@ if (!opt.arguments().isEmpty()) {
     def input = opt.arguments().join(' ')
     script += """\n$input"""
 }
-def grip = sh.parse(script)
-grip.setDelegate(core)
-grip.run() //run with CoreProcessor to do the actual work
-
-log.info(this.binding.properties.toMapString())
+CoreProcessor.run(script, context)

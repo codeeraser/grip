@@ -1,5 +1,5 @@
 import de.metacode.grip.env.SqlEnv
-import de.metacode.grip.renderer.excel.SimpleExcel
+import de.metacode.grip.renderer.SimpleExcel
 import de.metacode.grip.util.Mail
 
 import java.sql.ResultSet

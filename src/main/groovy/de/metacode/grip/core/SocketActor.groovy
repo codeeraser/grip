@@ -32,12 +32,12 @@ class SocketActor extends DefaultActor {
                     }
                     if (buffer.startsWith("running")) {
                         sched.getJobKeys(GroupMatcher.anyGroup()).each {
-                            output << sched.getCurrentlyExecutingJobs()
+                            output << sched.currentlyExecutingJobs
                         }
                     }
                     if (buffer.startsWith("schedule")) {
                         sched.getJobKeys(GroupMatcher.anyGroup()).each {
-                            output << sched.getMetaData()
+                            output << sched.metaData
                         }
                     }
                 }

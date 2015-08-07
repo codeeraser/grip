@@ -1,6 +1,5 @@
-package de.metacode.grip.renderer.excel
+package de.metacode.grip.renderer
 
-import de.metacode.grip.util.AttachmentProvider
 import groovy.util.logging.Slf4j
 import org.apache.poi.hssf.usermodel.HSSFRow
 import org.apache.poi.hssf.usermodel.HSSFSheet
@@ -14,7 +13,7 @@ import java.sql.ResultSet
  * Created by mloesch on 15.03.15.
  */
 @Slf4j
-class SimpleExcel implements AttachmentProvider {
+class SimpleExcel implements DataSourceDistributor {
 
     HSSFWorkbook wb;
 

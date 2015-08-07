@@ -1,11 +1,13 @@
 package de.metacode.grip.env
 
 import groovy.sql.Sql
+import groovy.util.logging.Slf4j
 
 /**
  * Created by mloesch on 14.03.15.
  */
 
+@Slf4j
 class SqlEnv implements Env {
     String url
     String driver
@@ -13,18 +15,32 @@ class SqlEnv implements Env {
     String pwd
     boolean autocommit
 
-    Sql cache = null;
+    private Sql cache = null;
+    private final Object mutex = new Object()
 
     @Override
     def Sql createEnv() {
-        if (cache != null && !cache.connection.isClosed()) {
-            return cache;
+        synchronized (this.mutex) {
+            if (cache != null && !cache.connection.closed) {
+                log.trace("return cached Sql instance")
+                return cache
+            }
+            cache = Sql.newInstance(url, user, pwd, driver)
+            if (autocommit) {
+                log.debug("activate autocommit")
+                cache.connection.autoCommit = true
+            }
+            return cache
         }
-        def sql = Sql.newInstance(url, user, pwd, driver)
-        if (autocommit) {
-            sql.connection.setAutoCommit()
+    }
+
+    @Override
+    def destroy() {
+        synchronized (this.mutex) {
+            if (cache != null) {
+                log.debug("closing connection")
+                cache.close()
+            }
         }
-        cache = sql
-        return sql
     }
 }

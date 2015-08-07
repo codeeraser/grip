@@ -7,22 +7,20 @@ import org.quartz.JobExecutionException
 import org.slf4j.MDC
 
 /**
- * Created on 22.05.15
- * Copyright (c) market maker Software AG. All Rights Reserved.
- *
- * @author mloesch
+ * Created by mloesch on 22.05.15.
  */
+
 @Slf4j
 class JobShell implements Job {
     @Override
     void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         def context = jobExecutionContext.jobDetail.jobDataMap["context"] as Map
-        MDC.put("loggerFileName", context['name'])
+        MDC.put("loggerFileName", context['name'] as String)
         try {
             CoreProcessor.run(jobExecutionContext.jobDetail.jobDataMap.getString("script"),
                     context)
         } catch (Exception e) {
-            log.error(e.getMessage(), e)
+            log.error(e.message, e)
         } finally {
             MDC.remove("loggerFileName");
         }
