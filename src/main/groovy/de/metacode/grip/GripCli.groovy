@@ -1,11 +1,7 @@
 package de.metacode.grip
 
-import de.metacode.grip.core.Bootstrap
 import de.metacode.grip.core.CoreProcessor
 import de.metacode.grip.core.InitProcessor
-import de.metacode.grip.core.ast.MoveToTopCustomizer
-import de.metacode.grip.core.ast.RemoveCustomizer
-import org.codehaus.groovy.control.CompilerConfiguration
 import org.slf4j.LoggerFactory
 
 /**
@@ -13,9 +9,6 @@ import org.slf4j.LoggerFactory
  */
 
 def log = LoggerFactory.getLogger(GripCli.class)
-
-//def bs = new Bootstrap()
-//bs.run()
 
 /// Cli /////////////////////////////////////////////////////////////////////////////////////////////
 def cli = new CliBuilder(usage: 'groovy GripCli.groovyovy -f[h] script')

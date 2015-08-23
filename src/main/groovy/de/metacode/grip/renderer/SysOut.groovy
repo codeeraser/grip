@@ -6,8 +6,12 @@ import java.sql.ResultSet
  * Created by mloesch on 07.08.15.
  */
 
-class SysOut {
+class SysOut implements Instantiable {
     private final static int PAD = 15
+
+    def sout(String text) {
+        println(text)
+    }
 
     def write(ResultSet rs) {
         def metadata = rs.metaData

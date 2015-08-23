@@ -13,11 +13,11 @@ import java.sql.ResultSet
  * Created by mloesch on 15.03.15.
  */
 @Slf4j
-class SimpleExcel implements DataSourceDistributor {
+class SimpleExcel implements DataSourceDistributor, Instantiable {
 
     HSSFWorkbook wb;
 
-    SimpleExcel() {
+    private SimpleExcel(Map m) {
         this.wb = new HSSFWorkbook()
     }
 

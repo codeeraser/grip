@@ -11,12 +11,20 @@ import javax.mail.util.ByteArrayDataSource
  */
 
 @Slf4j
-class Csv implements DataSourceDistributor {
+class Csv implements DataSourceDistributor, Instantiable {
 
     private final ByteArrayOutputStream bos = new ByteArrayOutputStream()
     final CSVWriter writer;
+    final String separator
 
-    Csv(String separator) {
+    static {
+        Csv.metaClass.constructor = { Map m ->
+            new Csv(m.separator)
+        }
+    }
+
+    private Csv(String separator = ',') {
+        this.separator = separator
         Writer out = new BufferedWriter(new OutputStreamWriter(bos))
         this.writer = new CSVWriter(out, separator as char)
     }
