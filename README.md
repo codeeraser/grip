@@ -5,8 +5,8 @@ The goal of *Grip* is to support you handling data and datasources you frequentl
 
 When you process some data you have to do three steps typically:
 
-1. Access the datasource
-2. Do something with the data (formatting, calculations, ...)
+1. Access the datasource and fetch data
+2. Do something with it (formatting, calculations, ...)
 3. Render/Process your results (to readable text, SQL, CSV, ...)
 
 The first and the third step often turns out to be a very repetitive work.
@@ -34,3 +34,10 @@ The `init` part sets up the *Env* representing a mysql database.
 You use it by just calling the name you defined (`mysql.query ...`).
 `newCsv` instantiates a Csv *Renderer* giving you a com.opencsv.CSVWriter to work with.
 You actually define *Envs* in your home-dir (~/.grip/init.grip), so this script contains 3 lines of code in the end.
+
+In this early state, 3 *Renderer* are available:
+* Csv (OpenCsv)
+* SimpleExcel (POI)
+* SysOut (Console)
+
+Only one *Env* exists with SqlEnv to access Databases via JDBC.
