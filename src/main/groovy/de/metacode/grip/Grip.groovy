@@ -36,7 +36,11 @@ if (props.exists()) {
     if (config.containsKey("workdir")) {
         workdir = config.workdir
     }
+    if ("true".equals(config.monitoring)) {
+        new SocketActor().start()
+    }
 }
+
 if (System.getProperty("workdir") != null) {
     workdir = System.getProperty("workdir")
 }
@@ -48,7 +52,6 @@ def scriptDir = new File(workdir)
 loadInitScript(new File(scriptDir.absolutePath, "init.grip"), log, context)
 
 Quartz.instance.start()
-def sa = new SocketActor().start()
 
 scriptDir.eachFileMatch(FileType.FILES, ~/.*grip$/) { File file ->
     if (!file.name.endsWith("init.grip")) {
@@ -62,6 +65,3 @@ def loadInitScript(File init, Logger log, Map context) {
         InitProcessor.run(init, context)
     }
 }
-
-sa.join()
-Quartz.instance.stop()
