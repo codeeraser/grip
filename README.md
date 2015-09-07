@@ -40,4 +40,4 @@ In this early state, 3 *Renderer* are available:
 * SimpleExcel (POI)
 * SysOut (Console)
 
-Only one *Env* exists with SqlEnv to access Databases via JDBC.
+Only one *Env* exists (SqlEnv) to access databases via JDBC.
