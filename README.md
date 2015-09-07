@@ -38,9 +38,10 @@ You actually define *Envs* in your home-dir (~/.grip/init.grip), so this script 
 Structure of a *Grip* script
 ------
 A *Grip* script contains up to three parts.
-1. The regular script.
-2. The init part, which is code `init {}` contains.
-3. The scheduler part, which is the hook to setup a quartz job executing yout script.
+
+1. The regular script
+2. The init part, which is code `init {}` contains
+3. The scheduler part, which is the hook to setup a quartz job executing yout script
 
 When you write the script you don't need to stick to an order.
 If there's a `schedule` somewhere in your script, *Grip* creates a quartz job.
