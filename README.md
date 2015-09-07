@@ -35,9 +35,31 @@ You use it by just calling the name you defined (`mysql.query ...`).
 `newCsv` instantiates a Csv *Renderer* giving you a com.opencsv.CSVWriter to work with.
 You actually define *Envs* in your home-dir (~/.grip/init.grip), so this script contains 3 lines of code in the end.
 
+Structure of a *Grip* script
+------
+A *Grip* script contains up to three parts.
+1. The regular script.
+2. The init part, which is code `init {}` contains.
+3. The scheduler part, which is the hook to setup a quartz job executing yout script.
+
+When you write the script you don't need to stick to an order.
+If there's a `schedule` somewhere in your script, *Grip* creates a quartz job.
+If there's an `init{}` somewhere in your script, its contained code will be executed first.
+
+Renderer
+------
 In this early state, 3 *Renderer* are available:
 * Csv (OpenCsv)
 * SimpleExcel (POI)
 * SysOut (Console)
 
+Env
+------
 Only one *Env* exists (SqlEnv) to access databases via JDBC.
+
+Scheduler
+------
+Every script can be scheduled using the `schedule` command and a cron-like definition.
+To do so, put the `schedule` command somewhere in your script. E.g. to execute a script every 30 seconds:
+```schedule "MyAmazingGripScript", "0/30 * * * * ?"```
+Read more about the cron format: http://quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06
