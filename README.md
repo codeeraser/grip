@@ -62,5 +62,7 @@ Scheduler
 ------
 Every script can be scheduled using the `schedule` command and a cron-like definition.
 To do so, put the `schedule` command somewhere in your script. E.g. to execute a script every 30 seconds:
+
 ```schedule "MyAmazingGripScript", "0/30 * * * * ?"```
+
 Read more about the cron format: http://quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06
