@@ -26,6 +26,26 @@ trait DataSourceDistributor implements AttachmentProvider {
         fos.close()
     }
 
+    def toRemoteFile(Map params) {
+        log.debug("write data to remote destination. params: $params")
+        def name = UUID.randomUUID().toString()
+        File tmp = File.createTempFile(name, "dat")
+        log.debug("write data into tmp file: $tmp.absolutePath")
+        def fos = new FileOutputStream(tmp)
+        fos.write(toDataSource().inputStream.bytes)
+        fos.close()
+        def ant = new AntBuilder()
+        log.debug("execute scp")
+        ant.scp(trust: true
+                , verbose: true
+                , file: "${tmp.absolutePath}"
+                , todir: "${params.user}@${params.host}:${params.path}"
+                , password: "${params.pwd}"
+        )
+        log.debug("delete tmp file")
+        tmp.delete()
+    }
+
     def sendMail(Map params, String filename) {
         log.debug("sending mail with params $params")
 

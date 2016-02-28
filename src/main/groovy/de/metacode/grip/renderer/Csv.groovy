@@ -15,18 +15,16 @@ class Csv implements DataSourceDistributor, Instantiable {
 
     private final ByteArrayOutputStream bos = new ByteArrayOutputStream()
     final CSVWriter writer;
-    final String separator
 
     static {
         Csv.metaClass.constructor = { Map m ->
-            new Csv(m.separator)
+            new Csv((m.separator ?: ',') as char, (m.quote ?: '\0') as char)
         }
     }
 
-    private Csv(String separator = ',') {
-        this.separator = separator
+    private Csv(char separator, char quote) {
         Writer out = new BufferedWriter(new OutputStreamWriter(bos))
-        this.writer = new CSVWriter(out, separator as char)
+        this.writer = new CSVWriter(out, separator, quote)
     }
 
     @Override
