@@ -19,11 +19,11 @@ configurations {
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.4.0'
+    compile 'org.codehaus.groovy:groovy-all:2.4.8'
     compile 'commons-cli:commons-cli:1.2'
     compile 'org.reflections:reflections:0.9.9-RC1'
     compile 'org.slf4j:slf4j-api:1.7.7'
-    compile 'hsqldb:hsqldb:1.8.0.10'
+    compile group: 'org.hsqldb', name: 'hsqldb', version: '2.3.2'
     compile 'javax.mail:mail:1.4'
     compile 'org.apache.poi:poi:3.11'
     compile 'org.quartz-scheduler:quartz:2.2.1'
@@ -41,6 +41,7 @@ dependencies {
     compile "javax.servlet:javax.servlet-api:3.0.1"
     ivy "org.apache.ivy:ivy:2.4.0"
     testCompile 'junit:junit:4.12'
+    testCompile "org.spockframework:spock-core:1.1-groovy-2.4-rc-3"
 }
 
 tasks.withType(GroovyCompile) {
@@ -55,6 +56,20 @@ task uberjar(type: Jar, dependsOn: [':compileJava', ':compileGroovy']) {
 
     manifest {
         attributes 'Main-Class': mainClassName
+    }
+}
+
+test {
+    include 'de/metacode/grip/**'
+    testLogging.showStandardStreams = true
+
+    beforeTest { descriptor ->
+        logger.lifecycle("Running test: $descriptor.className")
+    }
+
+    testLogging {
+        // Show that tests are run in the command-line output
+        events 'started', 'passed'
     }
 }
 

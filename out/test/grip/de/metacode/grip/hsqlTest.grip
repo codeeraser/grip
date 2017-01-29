@@ -22,5 +22,9 @@ hsql.rows("select * from atable").each { row ->
 schedule "HsqlTest", "0/10 * * * * ?"
 
 init {
-    println "nothing to init"
+    env "hsql", sql(
+            url: "jdbc:hsqldb:mem:testdb",
+            driver: "org.hsqldb.jdbcDriver",
+            user: "sa",
+            pwd: "")
 }

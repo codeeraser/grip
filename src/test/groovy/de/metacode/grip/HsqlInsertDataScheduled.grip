@@ -1,0 +1,15 @@
+package de.metacode.grip
+
+log.info "inserting a row"
+hsql.execute "insert into atable(name, address) values('name', 'address')"
+
+init {
+    env "hsql", sql(
+            url: "jdbc:hsqldb:mem:testdb",
+            driver: "org.hsqldb.jdbcDriver",
+            user: "sa",
+            pwd: "",
+            autocommit: "true")
+}
+
+schedule "HsqlInsertDataScheduled", "0/1 * * * * ?"

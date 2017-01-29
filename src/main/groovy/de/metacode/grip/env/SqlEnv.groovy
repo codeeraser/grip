@@ -13,7 +13,7 @@ class SqlEnv implements Env {
     String driver
     String user
     String pwd
-    boolean autocommit
+    boolean autocommit = false
 
     private Sql cache = null;
     private final Object mutex = new Object()
@@ -26,10 +26,8 @@ class SqlEnv implements Env {
                 return cache
             }
             cache = Sql.newInstance(url, user, pwd, driver)
-            if (autocommit) {
-                log.debug("activate autocommit")
-                cache.connection.autoCommit = true
-            }
+            log.debug("autocommit $autocommit")
+            cache.connection.autoCommit = autocommit
             return cache
         }
     }

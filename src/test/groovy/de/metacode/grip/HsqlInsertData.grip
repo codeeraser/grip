@@ -1,0 +1,16 @@
+package de.metacode.grip
+
+log.info "inserting 3 rows"
+hsql.execute "insert into atable(name, address) values('dave', 'some address')"
+hsql.execute "insert into atable(name, address) values('joe', 'another address')"
+hsql.execute "insert into atable(name, address) values('fred', 'yet another address')"
+log.info "calling commit()"
+hsql.commit()
+
+init {
+    env "hsql", sql(
+            url: "jdbc:hsqldb:mem:testdb",
+            driver: "org.hsqldb.jdbcDriver",
+            user: "sa",
+            pwd: "")
+}

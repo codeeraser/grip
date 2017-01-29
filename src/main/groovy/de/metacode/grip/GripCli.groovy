@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 def log = LoggerFactory.getLogger(GripCli.class)
 
 /// Cli /////////////////////////////////////////////////////////////////////////////////////////////
-def cli = new CliBuilder(usage: 'groovy GripCli.groovyovy -f[h] script')
+def cli = new CliBuilder(usage: 'groovy GripCli.groovy -f[h] script')
 cli.f(longOpt: 'file', 'file that contains a grip script', type: String, args: 1, required: true)
 cli.h(longOpt: 'help', 'usage information', required: false)
 

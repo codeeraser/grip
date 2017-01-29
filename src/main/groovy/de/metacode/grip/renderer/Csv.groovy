@@ -14,7 +14,7 @@ import javax.mail.util.ByteArrayDataSource
 class Csv implements DataSourceDistributor, Instantiable {
 
     private final ByteArrayOutputStream bos = new ByteArrayOutputStream()
-    final CSVWriter writer;
+    final CSVWriter writer
 
     static {
         Csv.metaClass.constructor = { Map m ->
