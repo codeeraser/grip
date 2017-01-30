@@ -3,7 +3,6 @@ apply plugin: 'application'
 version = '0.1'
 mainClassName = 'de.metacode.grip.Grip'
 
-
 repositories {
     repositories {
         maven  {
@@ -49,6 +48,7 @@ tasks.withType(GroovyCompile) {
 }
 
 task uberjar(type: Jar, dependsOn: [':compileJava', ':compileGroovy']) {
+    uberjar.dependsOn(test)
     from files(sourceSets.main.output.resourcesDir)
     from files(sourceSets.main.output.classesDir) //needed for reflections-api
     from files(sourceSets.main.allSource)
@@ -58,6 +58,9 @@ task uberjar(type: Jar, dependsOn: [':compileJava', ':compileGroovy']) {
         attributes 'Main-Class': mainClassName
     }
 }
+
+sourceSets.main.resources.srcDirs 'src/main/groovy'
+sourceSets.test.resources.srcDirs 'src/test/groovy'
 
 test {
     include 'de/metacode/grip/**'
@@ -72,10 +75,6 @@ test {
         events 'started', 'passed'
     }
 }
-
-sourceSets.main.resources.srcDirs 'src/main/groovy'
-sourceSets.test.resources.srcDirs 'src/test/groovy'
-
 
 apply plugin: 'idea'
 
