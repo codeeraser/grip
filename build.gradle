@@ -43,6 +43,14 @@ dependencies {
     testCompile "org.spockframework:spock-core:1.1-groovy-2.4-rc-3"
 }
 
+apply plugin: "io.ratpack.ratpack-groovy"
+
+tasks.withType(JavaExec) {
+    // Assign all Java system properties from
+    // the command line to the JavaExec task.
+    systemProperties System.properties
+}
+
 tasks.withType(GroovyCompile) {
     groovyClasspath += configurations.ivy
 }
@@ -76,10 +84,22 @@ test {
     }
 }
 
+
+buildscript {
+    repositories {
+        maven { url "http://oss.jfrog.org/artifactory/repo" }
+        jcenter()
+    }
+    dependencies {
+        classpath 'io.ratpack:ratpack-gradle:1.0.0'
+    }
+}
+
 apply plugin: 'idea'
 
 idea {
     project {
+        jdkName "1.8"
         languageLevel = '1.8'
 
         modules.each { m ->
