@@ -1,8 +1,11 @@
 import de.metacode.grip.GripService
+import de.metacode.grip.core.CoreProcessor
+import de.metacode.grip.core.InitProcessor
 import de.metacode.grip.core.Quartz
 import org.quartz.JobKey
 import org.quartz.Trigger
 import org.quartz.impl.matchers.GroupMatcher
+import ratpack.http.TypedData
 
 import static ratpack.groovy.Groovy.ratpack
 
@@ -30,6 +33,27 @@ ratpack {
                     }
                 }
                 render jobs
+            }
+        }
+        prefix("exec") {
+            post() {
+                context.request.body.then { TypedData td ->
+                    def script = td.text
+                    def ctx = [name: 'RESTexec']
+/// init script /////////////////////////////////////////////////////////////////////////////////////
+                    def home = System.getProperty("user.home")
+                    def initScript = new File("""$home/.grip/init.grip""")
+                    if (initScript.exists()) {
+                        InitProcessor.run(initScript, ctx)
+                    }
+/// grip script /////////////////////////////////////////////////////////////////////////////////////
+                    CoreProcessor.run(script, ctx)
+                    if (ctx['response']) {
+                        context.response.send(ctx['response'] as String)
+                    } else {
+                        context.response.send()
+                    }
+                }
             }
         }
     }

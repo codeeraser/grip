@@ -8,7 +8,6 @@ import de.metacode.grip.core.JobProcessor
 import de.metacode.grip.core.Quartz
 import de.metacode.grip.core.SocketActor
 import groovy.io.FileType
-import groovy.util.logging.Slf4j
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -16,6 +15,7 @@ import org.slf4j.LoggerFactory
  * Created by mloesch on 31.01.17.
  */
 trait Bootstrap {
+
     def run() {
         // assume SLF4J is bound to logback in the current environment
         LoggerContext lc = (LoggerContext) LoggerFactory.ILoggerFactory

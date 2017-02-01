@@ -14,36 +14,43 @@ class SysOut implements Instantiable {
     }
 
     def write(ResultSet rs) {
+        println toText(rs)
+    }
+
+    String toText(ResultSet rs) {
+        def result = ""
         def metadata = rs.metaData
         def head = []
         for (int i = 0; i < metadata.columnCount; i++) {
             def name = metadata.getColumnName(i + 1)
-            head << name
+            head <<= name
         }
 
         Number textLength = metadata.columnCount * PAD
-        println()
-        println """ that's what comes of it! """.center(textLength, '-')
-        head.each {String s ->
-            print s.padRight(PAD)
+        result <<= '\n'
+        result <<= """ that's what comes of it! """.center(textLength, '-')
+        result <<= '\n'
+        head.each { String s ->
+            result <<= s.padRight(PAD)
         }
-        println()
-        println "-" * textLength
+        result <<= '\n'
+        result <<= "-" * textLength
+        result <<= '\n'
         while (rs.next()) {
             for (int i = 0; i < metadata.columnCount; i++) {
                 def value = rs.getString(i + 1)
                 if (value) {
                     if (value.length() >= PAD) {
-                        print "$value   "
+                        result <<= "$value   "
                     } else {
-                        print value.padRight(PAD)
+                        result <<= value.padRight(PAD)
                     }
                 } else {
-                    print 'null'.padRight(PAD)
+                    result <<= 'null'.padRight(PAD)
                 }
             }
-            println ""
+            result <<= '\n'
         }
-        println()
+        result <<= '\n'
     }
 }

@@ -1,7 +1,7 @@
 apply plugin: 'groovy'
 apply plugin: 'application'
 version = '0.1'
-mainClassName = 'de.metacode.grip.Grip'
+mainClassName = 'Ratpack'
 
 repositories {
     repositories {
@@ -44,6 +44,7 @@ dependencies {
 }
 
 apply plugin: "io.ratpack.ratpack-groovy"
+apply plugin: "com.github.johnrengelman.shadow"
 
 tasks.withType(JavaExec) {
     // Assign all Java system properties from
@@ -91,7 +92,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'io.ratpack:ratpack-gradle:1.0.0'
+        classpath "io.ratpack:ratpack-gradle:1.4.4"
+        classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3"
     }
 }
 

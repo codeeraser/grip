@@ -15,16 +15,17 @@ import org.codehaus.groovy.control.CompilerConfiguration
 class InitProcessor {
     static final String ENV = "env"
 
-    Map context
+    final Map context
+    final ClassLoader groovyClassLoader
 
     InitProcessor(Map context) {
         this.context = context
+        this.groovyClassLoader = new GroovyClassLoader()
     }
 
     static def sql(Map map) {
         new SqlEnv(map)
     }
-
 
     static def init(Closure c) {
         c()
@@ -40,19 +41,22 @@ class InitProcessor {
     }
 
     def grab(Map dependencies) {
-        Grape.grab(classLoader: this.class.classLoader.rootLoader, dependencies)
+        Grape.grab(classLoader: this.groovyClassLoader, dependencies)
     }
 
     static void run(File gripScript, Map context) {
+        run(gripScript.text, context)
+    }
+
+    static void run(String gripScript, Map context) {
         def cc = new CompilerConfiguration()
         cc.addCompilationCustomizers new HighlanderCustomizer("init")
         cc.scriptBaseClass = DelegatingScript.class.name
         def sh = new GroovyShell(cc)
 
-        def script = gripScript.text
         def env = new InitProcessor(context)
 
-        def grip = sh.parse(script)
+        def grip = sh.parse(gripScript)
         grip.setDelegate(env)
         grip.run()
     }

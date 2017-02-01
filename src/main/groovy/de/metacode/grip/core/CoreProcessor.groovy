@@ -37,7 +37,7 @@ class CoreProcessor extends InitProcessor {
         def newInstanceWithArgs = { Class clazz, Map args -> clazz.newInstance(args) }
         def newInstance = { Class clazz -> clazz.newInstance() }
 
-        def classLoaders = [ClasspathHelper.contextClassLoader(), ClasspathHelper.staticClassLoader()];
+        def classLoaders = [ClasspathHelper.contextClassLoader(), ClasspathHelper.staticClassLoader()]
         new Reflections(
                 new ConfigurationBuilder()
                         .setScanners(new SubTypesScanner(false), new ResourcesScanner())
@@ -56,6 +56,10 @@ class CoreProcessor extends InitProcessor {
             return env.createEnv()
         }
         this.binding[name]
+    }
+
+    def response(String text) {
+        this.context['response'] = text
     }
 
     static void run(String gripScript, Map context) {
