@@ -5,6 +5,7 @@ import groovy.util.logging.Slf4j
 
 import javax.activation.DataSource
 import javax.mail.util.ByteArrayDataSource
+import java.sql.ResultSet
 
 /**
  * Created by mloesch on 07.08.15.
@@ -16,15 +17,14 @@ class Csv implements DataSourceDistributor, Instantiable {
     private final ByteArrayOutputStream bos = new ByteArrayOutputStream()
     final CSVWriter writer
 
-    static {
-        Csv.metaClass.constructor = { Map m ->
-            new Csv((m.separator ?: ',') as char, (m.quote ?: '\0') as char)
-        }
+    private Csv(Map m) {
+        Writer out = new BufferedWriter(new OutputStreamWriter(bos))
+        this.writer = new CSVWriter(out, (m?.separator ?: ',') as char, (m?.quote ?: '\0') as char)
     }
 
-    private Csv(char separator, char quote) {
-        Writer out = new BufferedWriter(new OutputStreamWriter(bos))
-        this.writer = new CSVWriter(out, separator, quote)
+    Csv writeAll(ResultSet rs) {
+        this.writer.writeAll(rs, true)
+        return this
     }
 
     @Override

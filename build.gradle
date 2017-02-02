@@ -38,6 +38,7 @@ dependencies {
     compile "com.craigburke.document:pdf:0.4.6"
     compile "com.craigburke.document:word:0.4.6"
     compile "javax.servlet:javax.servlet-api:3.0.1"
+    compile "commons-io:commons-io:2.5"
     ivy "org.apache.ivy:ivy:2.4.0"
     testCompile 'junit:junit:4.12'
     testCompile "org.spockframework:spock-core:1.1-groovy-2.4-rc-3"

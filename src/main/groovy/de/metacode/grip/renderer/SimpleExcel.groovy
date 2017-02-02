@@ -26,6 +26,10 @@ class SimpleExcel implements DataSourceDistributor, Instantiable {
         return this.wb.createSheet(name)
     }
 
+    SimpleExcel writeToSheet(String sheetName, ResultSet rs) {
+        return writeToSheet(newSheet(sheetName), rs)
+    }
+
     SimpleExcel writeToSheet(HSSFSheet sheet, ResultSet rs) {
         log.debug("writing to sheet $sheet.sheetName")
         log.trace(rs.metaData.toString())
@@ -37,7 +41,6 @@ class SimpleExcel implements DataSourceDistributor, Instantiable {
         log.debug("wrote $row rows to sheet")
         return this
     }
-
 
     static def writeHead(HSSFRow row, ResultSet rs) {
         def metadata = rs.getMetaData()
@@ -66,6 +69,6 @@ class SimpleExcel implements DataSourceDistributor, Instantiable {
         log.trace("writing ByteArrayOutputStream into ByteArrayDataSource")
         def dsExl = new ByteArrayDataSource(isExl, "application/vnd.ms-excel")
         osExl.close()
-        return dsExl;
+        return dsExl
     }
 }

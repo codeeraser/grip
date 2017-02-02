@@ -14,6 +14,8 @@ import org.reflections.util.FilterBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import javax.activation.DataSource
+
 /**
  * Created by mloesch on 14.03.15.
  */
@@ -59,7 +61,11 @@ class CoreProcessor extends InitProcessor {
     }
 
     def response(String text) {
-        this.context['response'] = text
+        this.context['responseText'] = text
+    }
+
+    def response(DataSource ds) {
+        this.context['responseDataSource'] = ds
     }
 
     static void run(String gripScript, Map context) {

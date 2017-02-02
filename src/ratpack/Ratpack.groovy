@@ -2,10 +2,13 @@ import de.metacode.grip.GripService
 import de.metacode.grip.core.CoreProcessor
 import de.metacode.grip.core.InitProcessor
 import de.metacode.grip.core.Quartz
+import org.apache.commons.io.IOUtils
 import org.quartz.JobKey
 import org.quartz.Trigger
 import org.quartz.impl.matchers.GroupMatcher
 import ratpack.http.TypedData
+
+import javax.activation.DataSource
 
 import static ratpack.groovy.Groovy.ratpack
 
@@ -18,7 +21,7 @@ ratpack {
         bind GripService
     }
     handlers {
-        prefix("jobs"){
+        prefix("jobs") {
             get() {
                 def jobs = ""
                 def scheduler = Quartz.instance.sched
@@ -48,8 +51,11 @@ ratpack {
                     }
 /// grip script /////////////////////////////////////////////////////////////////////////////////////
                     CoreProcessor.run(script, ctx)
-                    if (ctx['response']) {
-                        context.response.send(ctx['response'] as String)
+                    if (ctx['responseText']) {
+                        context.response.send(ctx['responseText'] as String)
+                    } else if (ctx['responseDataSource']) {
+                        def ds = ctx['responseDataSource'] as DataSource
+                        context.response.send(ds.contentType, IOUtils.toByteArray(ds.inputStream))
                     } else {
                         context.response.send()
                     }
