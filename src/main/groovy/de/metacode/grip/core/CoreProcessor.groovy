@@ -3,6 +3,7 @@ package de.metacode.grip.core
 import de.metacode.grip.core.ast.MoveToTopCustomizer
 import de.metacode.grip.core.ast.RemoveCustomizer
 import de.metacode.grip.env.Env
+import de.metacode.grip.renderer.DataSourceDistributor
 import de.metacode.grip.renderer.Instantiable
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.reflections.Reflections
@@ -60,12 +61,8 @@ class CoreProcessor extends InitProcessor {
         this.binding[name]
     }
 
-    def response(String text) {
-        this.context['responseText'] = text
-    }
-
     def response(DataSource ds) {
-        this.context['responseDataSource'] = ds
+        this.context['response'] = ds
     }
 
     static void run(String gripScript, Map context) {

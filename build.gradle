@@ -1,7 +1,6 @@
 apply plugin: 'groovy'
 apply plugin: 'application'
 version = '0.1'
-mainClassName = 'Ratpack'
 
 repositories {
     repositories {
@@ -57,18 +56,6 @@ tasks.withType(GroovyCompile) {
     groovyClasspath += configurations.ivy
 }
 
-task uberjar(type: Jar, dependsOn: [':compileJava', ':compileGroovy']) {
-    uberjar.dependsOn(test)
-    from files(sourceSets.main.output.resourcesDir)
-    from files(sourceSets.main.output.classesDir) //needed for reflections-api
-    from files(sourceSets.main.allSource)
-    from configurations.runtime.asFileTree.files.collect { zipTree(it) }
-
-    manifest {
-        attributes 'Main-Class': mainClassName
-    }
-}
-
 sourceSets.main.resources.srcDirs 'src/main/groovy'
 sourceSets.test.resources.srcDirs 'src/test/groovy'
 
@@ -85,7 +72,6 @@ test {
         events 'started', 'passed'
     }
 }
-
 
 buildscript {
     repositories {

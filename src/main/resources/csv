@@ -1,0 +1,7 @@
+#!/bin/bash
+quote='"'
+query=$quote$*$quote
+data1='response newCsv().writeAll(hsql.executeQuery('
+data2=')).toDataSource()'
+data=$data1$query$data2
+curl -o gripresult.csv -data="$data" localhost:5050/exec

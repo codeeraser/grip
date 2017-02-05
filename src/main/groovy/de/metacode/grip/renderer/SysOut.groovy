@@ -1,24 +1,22 @@
 package de.metacode.grip.renderer
 
+import groovy.util.logging.Slf4j
+
+import javax.activation.DataSource
+import javax.mail.util.ByteArrayDataSource
 import java.sql.ResultSet
 
 /**
  * Created by mloesch on 07.08.15.
  */
 
-class SysOut implements Instantiable {
+@Slf4j
+class SysOut implements Instantiable, DataSourceDistributor {
     private final static int PAD = 15
 
-    def sout(String text) {
-        println(text)
-    }
+    def out = "" 
 
     def write(ResultSet rs) {
-        println toText(rs)
-    }
-
-    String toText(ResultSet rs) {
-        def result = ""
         def metadata = rs.metaData
         def head = []
         for (int i = 0; i < metadata.columnCount; i++) {
@@ -27,30 +25,39 @@ class SysOut implements Instantiable {
         }
 
         Number textLength = metadata.columnCount * PAD
-        result <<= '\n'
-        result <<= """ that's what comes of it! """.center(textLength, '-')
-        result <<= '\n'
+        out <<= '\n'
+        out <<= """ that's what comes of it! """.center(textLength, '-')
+        out <<= '\n'
         head.each { String s ->
-            result <<= s.padRight(PAD)
+            out <<= s.padRight(PAD)
         }
-        result <<= '\n'
-        result <<= "-" * textLength
-        result <<= '\n'
+        out <<= '\n'
+        out <<= "-" * textLength
+        out <<= '\n'
         while (rs.next()) {
             for (int i = 0; i < metadata.columnCount; i++) {
                 def value = rs.getString(i + 1)
                 if (value) {
                     if (value.length() >= PAD) {
-                        result <<= "$value   "
+                        out <<= "$value   "
                     } else {
-                        result <<= value.padRight(PAD)
+                        out <<= value.padRight(PAD)
                     }
                 } else {
-                    result <<= 'null'.padRight(PAD)
+                    out <<= 'null'.padRight(PAD)
                 }
             }
-            result <<= '\n'
+            out <<= '\n'
         }
-        result <<= '\n'
+        out <<= '\n'
+        return this
+    }
+
+    @Override
+    DataSource toDataSource() {
+        log.trace("writing out.bytes to datasource ${out}")
+        def ds = new ByteArrayDataSource(out.toString().bytes, "text/plain")
+        log.trace("closing outputstream")
+        return ds
     }
 }

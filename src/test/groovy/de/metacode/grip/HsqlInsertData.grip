@@ -1,5 +1,3 @@
-package de.metacode.grip
-
 log.info "inserting 3 rows"
 hsql.execute "insert into atable(name, address) values('dave', 'some address')"
 hsql.execute "insert into atable(name, address) values('joe', 'another address')"

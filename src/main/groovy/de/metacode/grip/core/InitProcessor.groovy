@@ -1,6 +1,7 @@
 package de.metacode.grip.core
 
 import de.metacode.grip.core.ast.HighlanderCustomizer
+import de.metacode.grip.core.classloaderhack.TransferClassLoader
 import de.metacode.grip.env.Env
 import de.metacode.grip.env.SqlEnv
 import groovy.grape.Grape
@@ -41,7 +42,8 @@ class InitProcessor {
     }
 
     def grab(Map dependencies) {
-        Grape.grab(classLoader: this.groovyClassLoader, dependencies)
+        Grape.grab(classLoader: TransferClassLoader.instance, dependencies)
+        TransferClassLoader.instance.transferJarsToSystemloader()
     }
 
     static void run(File gripScript, Map context) {

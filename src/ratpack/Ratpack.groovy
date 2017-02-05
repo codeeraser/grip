@@ -42,7 +42,7 @@ ratpack {
             post() {
                 context.request.body.then { TypedData td ->
                     def script = td.text
-                    def ctx = [name: 'RESTexec']
+                    def ctx = [name: 'gripRESTExec']
 /// init script /////////////////////////////////////////////////////////////////////////////////////
                     def home = System.getProperty("user.home")
                     def initScript = new File("""$home/.grip/init.grip""")
@@ -51,10 +51,8 @@ ratpack {
                     }
 /// grip script /////////////////////////////////////////////////////////////////////////////////////
                     CoreProcessor.run(script, ctx)
-                    if (ctx['responseText']) {
-                        context.response.send(ctx['responseText'] as String)
-                    } else if (ctx['responseDataSource']) {
-                        def ds = ctx['responseDataSource'] as DataSource
+                    if (ctx['response']) {
+                        def ds = ctx['response'] as DataSource
                         context.response.send(ds.contentType, IOUtils.toByteArray(ds.inputStream))
                     } else {
                         context.response.send()

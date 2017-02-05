@@ -1,0 +1,5 @@
+#!/bin/bash
+at='"@'
+quote='"'
+cmd="curl --data-binary $at$*$quote localhost:5050/exec"
+eval $cmd
