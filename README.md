@@ -19,6 +19,8 @@ Additionally, *Grip* comes with Quartz support to schedule your scripts. When us
 To cut a long story short, this is a simple grip-script reading data from a database and writing the data to a csv-file:
 
 ```
+schedule 'MysqlExample', 'now'
+
 init {
     grab group: 'mysql', module: 'mysql-connector-java', version: '5.1.6'
     env "mysql", sql(
@@ -28,11 +30,11 @@ init {
             pwd: "testpwd")
 }
 
-def csv = newCsvWith(separator: ',')
+def csv = newCsvWith(separator: ';')
 mysql.query "select name, email from users", { rs -> csv.writeAll rs, false}
 csv.toFile "~/tmp/test.csv"
 ```
-
+This script is named *MysqlExample* and is scheduled *now* (which means just running once when *Grip* came up).
 The `init` part sets up the *Env* representing a mysql database.
 You use it by just calling the name you defined (`mysql.query ...`).
 `newCsv` instantiates a Csv *Renderer* giving you a com.opencsv.CSVWriter to work with.
