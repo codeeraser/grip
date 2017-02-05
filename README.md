@@ -104,9 +104,9 @@ Here's an example how to execute a script with curl:
 If you want to execute a script and getting back a reponse, you need to call the *response* methode.
 Here are some examples how to execute code (with curl):
 
-####Query your db from console (which brings history support)
-To get a very short script, you need to init your *Env* with *~/.grip/init.grip*
-If this file exists you can query your DB like this:
+####Query your db from console
+To get a very short script, you need to init your *Env* with *~/.grip/init.grip*.
+If this file exists you can query your DB like this (*Env* name is *hsql*):
  
 ```curl -data="response newSysOut().write(hsql.executeQuery("select * from atable")).toDataSource()" localhost:5050/exec```
 
@@ -119,7 +119,7 @@ You can do the same with generating Excel- or Csv-Files. Find the shell scripts 
 
 Deploying *Grip*
 ------
-Easiest way to deploy *Grip* is to build a shadowJar using gradle.
+The easiest way to deploy *Grip* is to build a shadowJar using gradle.
 After cloning the repo, just execute ```gradle shadowJar``` in the grip dir. You'll find the all-jar in build/libs.
 
 Now you can run *Grip* like this:
