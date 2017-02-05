@@ -68,7 +68,7 @@ Every *Renderer* provides three methods to work with its results
  * *toRemoteFile* to send file with scp
  * *sendMail* to send file via e-mail
  
- ####Some Examples
+####Some Examples
  ...TODO...
 
 
@@ -84,10 +84,10 @@ Read more about the cron format: http://quartz-scheduler.org/documentation/quart
 REST interface
 ------
 Two resources are available
-* Show schedules scripts ```GET /jobs```
+* Show scheduled scripts ```GET /jobs```
 * Execute a script ```POST /exec```
 
-####Show all known jobs (scheduled scrips)
+####Show all known jobs (scheduled scripts)
 
 The Joblist is plain text (should be json at some time), e.g.
 ```
@@ -97,6 +97,7 @@ The Joblist is plain text (should be json at some time), e.g.
 
 ####Running some code
 Here's an example how to execute a script with curl:
+
 ```curl --data-binary "@MyGripScript.grip" localhost:5050/exec```
 
 
@@ -105,10 +106,14 @@ Here are some examples how to execute code (with curl):
 
 ####Query your db from console (which brings history support)
 To get a very short script, you need to init your *Env* with *~/.grip/init.grip*
-If this file exists you can query your DB like this: 
+If this file exists you can query your DB like this:
+ 
 ```curl -data="response newSysOut().write(hsql.executeQuery("select * from atable")).toDataSource()" localhost:5050/exec```
+
 This is nice. But how about this:
+
 ```sout select name, address from atable```
+
 Cool, isn't it? *sout* is just a shell-script encapsulating the code.
 You can do the same with generating Excel- or Csv-Files. Find the shell scripts in *src/main/resources*.
 
@@ -118,6 +123,7 @@ Easiest way to deploy *Grip* is to build a shadowJar using gradle.
 After cloning the repo, just execute ```gradle shadowJar``` in the grip dir. You'll find the all-jar in build/libs.
 
 Now you can run *Grip* like this:
+
 ```java -Dworkdir="/user/home/gripscripts" -Dlog.dir="/user/home/logdir" -jar grip-0.1-all.jar```
 
 The *workdir* parameter is mandatory. *Grip* searches this dir for *.grip files to schedule them.
