@@ -1,6 +1,8 @@
 package de.metacode.grip.renderer
 
 import com.opencsv.CSVWriter
+import de.metacode.grip.env.SqlEnv
+import groovy.sql.Sql
 import groovy.util.logging.Slf4j
 
 import javax.activation.DataSource
@@ -20,6 +22,13 @@ class Csv implements DataSourceDistributor, Instantiable {
     private Csv(Map m) {
         Writer out = new BufferedWriter(new OutputStreamWriter(bos))
         this.writer = new CSVWriter(out, (m?.separator ?: ',') as char, (m?.quote ?: '\0') as char)
+    }
+
+    Csv writeAll(Sql sql, String query) {
+        sql.query(query, {ResultSet rs ->
+            this.writer.writeAll(rs, true)
+        })
+        return this
     }
 
     Csv writeAll(ResultSet rs) {

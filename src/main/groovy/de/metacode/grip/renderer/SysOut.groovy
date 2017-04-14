@@ -1,5 +1,7 @@
 package de.metacode.grip.renderer
 
+import de.metacode.grip.env.SqlEnv
+import groovy.sql.Sql
 import groovy.util.logging.Slf4j
 
 import javax.activation.DataSource
@@ -15,6 +17,13 @@ class SysOut implements Instantiable, DataSourceDistributor {
     private final static int PAD = 15
 
     def out = "" 
+
+    def write(Sql sql, String query) {
+        sql.query(query, {ResultSet rs ->
+            write(rs)
+        })
+        return this
+    }
 
     def write(ResultSet rs) {
         def metadata = rs.metaData

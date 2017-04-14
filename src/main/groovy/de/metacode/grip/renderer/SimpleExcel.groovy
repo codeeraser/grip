@@ -1,5 +1,6 @@
 package de.metacode.grip.renderer
 
+import groovy.sql.Sql
 import groovy.util.logging.Slf4j
 import org.apache.poi.hssf.usermodel.HSSFRow
 import org.apache.poi.hssf.usermodel.HSSFSheet
@@ -24,6 +25,13 @@ class SimpleExcel implements DataSourceDistributor, Instantiable {
     HSSFSheet newSheet(String name) {
         log.debug("creating sheet $name")
         return this.wb.createSheet(name)
+    }
+
+    SimpleExcel writeToSheet(String sheetName, Sql sql, String query) {
+        sql.query(query, {ResultSet rs ->
+            writeToSheet(sheetName, rs)
+        })
+        return this
     }
 
     SimpleExcel writeToSheet(String sheetName, ResultSet rs) {

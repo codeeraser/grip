@@ -81,6 +81,7 @@ buildscript {
     dependencies {
         classpath "io.ratpack:ratpack-gradle:1.4.4"
         classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3"
+        classpath 'com.bmuschko:gradle-docker-plugin:2.0'
     }
 }
 
