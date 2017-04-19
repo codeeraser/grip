@@ -38,6 +38,12 @@ class SimpleExcel implements DataSourceDistributor, Instantiable {
         return writeToSheet(newSheet(sheetName), rs)
     }
 
+    SimpleExcel writeToSheet(HSSFSheet sheet, String text) {
+        def cell = sheet.createRow(0).createCell(0)
+        cell.setCellValue(text)
+        return this
+    }
+
     SimpleExcel writeToSheet(HSSFSheet sheet, ResultSet rs) {
         log.debug("writing to sheet $sheet.sheetName")
         log.trace(rs.metaData.toString())

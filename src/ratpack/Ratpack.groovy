@@ -6,6 +6,10 @@ import org.apache.commons.io.IOUtils
 import org.quartz.JobKey
 import org.quartz.Trigger
 import org.quartz.impl.matchers.GroupMatcher
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import ratpack.groovy.handling.GroovyContext
+import ratpack.handling.RequestLogger
 import ratpack.http.TypedData
 
 import javax.activation.DataSource
@@ -17,10 +21,17 @@ import static ratpack.groovy.Groovy.ratpack
  */
 
 ratpack {
+
+    final Logger log = LoggerFactory.getLogger(getClass().getName())
+
     bindings {
         bind GripService
     }
+
     handlers {
+
+        all(RequestLogger.ncsa(log))
+
         prefix("jobs") {
             get() {
                 def jobs = ""
@@ -38,27 +49,53 @@ ratpack {
                 render jobs
             }
         }
+        prefix("run") {
+            post() {
+                context.request.body.then { TypedData td ->
+                    def scheduler = Quartz.instance.sched
+                    def jobName = td.text
+                    log.debug("searching for jobname $jobName")
+                    for (String groupName : scheduler.getJobGroupNames()) {
+                        for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+                            if (jobKey.name == jobName) {
+                                log.debug("found job $jobName")
+                                def map = scheduler.getJobDetail(jobKey).jobDataMap
+                                def ctx = map["context"] as Map
+                                def script = map["script"] as String
+                                executeScript(ctx, script, context)
+                            }
+                        }
+                    }
+                }
+            }
+        }
         prefix("exec") {
             post() {
                 context.request.body.then { TypedData td ->
                     def script = td.text
                     def ctx = [name: 'gripRESTExec']
-/// init script /////////////////////////////////////////////////////////////////////////////////////
-                    def home = System.getProperty("user.home")
-                    def initScript = new File("""$home/.grip/init.grip""")
-                    if (initScript.exists()) {
-                        InitProcessor.run(initScript, ctx)
-                    }
-/// grip script /////////////////////////////////////////////////////////////////////////////////////
-                    CoreProcessor.run(script, ctx)
-                    if (ctx['response']) {
-                        def ds = ctx['response'] as DataSource
-                        context.response.send(ds.contentType, IOUtils.toByteArray(ds.inputStream))
-                    } else {
-                        context.response.send()
-                    }
+                    executeScript(ctx, script, context)
                 }
             }
         }
+    }
+}
+
+private static void executeScript(Map gripContext, String script, GroovyContext groovyContext) {
+/// init script /////////////////////////////////////////////////////////////////////////////////////
+    def home = System.getProperty("user.home")
+    def initScript = new File("""$home/.grip/init.grip""")
+    if (initScript.exists()) {
+        InitProcessor.run(initScript, gripContext)
+    }
+/// actual script /////////////////////////////////////////////////////////////////////////////////////
+    CoreProcessor.run(script, gripContext)
+
+/// sending response if available
+    if (gripContext['response']) {
+        def ds = gripContext['response'] as DataSource
+        groovyContext.response.send(ds.contentType, IOUtils.toByteArray(ds.inputStream))
+    } else {
+        groovyContext.response.send()
     }
 }

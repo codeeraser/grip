@@ -46,8 +46,10 @@ class JobProcessor {
 
         def builder = newTrigger()
                 .withIdentity(name, name)
-        if ("now".equals(cronExpression)) {
+        if ("now" == cronExpression) {
             builder.startNow();
+        } else if ("never" == cronExpression) {
+            builder.withSchedule(cronSchedule("0 0 0 1 1 ? 2099"))
         } else {
             builder.withSchedule(cronSchedule(cronExpression))
         }

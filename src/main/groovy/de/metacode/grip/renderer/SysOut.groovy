@@ -1,6 +1,5 @@
 package de.metacode.grip.renderer
 
-import de.metacode.grip.env.SqlEnv
 import groovy.sql.Sql
 import groovy.util.logging.Slf4j
 

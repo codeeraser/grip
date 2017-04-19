@@ -6,7 +6,6 @@ import ch.qos.logback.core.util.StatusPrinter
 import de.metacode.grip.core.InitProcessor
 import de.metacode.grip.core.JobProcessor
 import de.metacode.grip.core.Quartz
-import de.metacode.grip.core.SocketActor
 import groovy.io.FileType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -35,9 +34,6 @@ trait Bootstrap {
             def config = new ConfigSlurper().parse(props.toURI().toURL())
             if (config.containsKey("workdir")) {
                 workdir = config.workdir
-            }
-            if ("true".equals(config.monitoring)) {
-                new SocketActor().start()
             }
         }
 
